@@ -173,7 +173,7 @@ export function calculateConfidence(nws, om) {
     `Temp: ${tempDiff}°F diff`,
     `Precip: ${precipDiff}% diff`,
     `Wind: ${windDiff}mph diff`,
-    conditionsAgree ? 'Conditions agree' : 'Conditions differ'
+    condPenalty === 0 ? 'Conditions agree' : condPenalty <= 5 ? 'Conditions similar' : 'Conditions differ'
   ].join(' · ')
 
   return { level, score, emoji, details }
