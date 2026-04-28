@@ -1,0 +1,135 @@
+{
+  "id": "route66-east-2026",
+  "name": "Route 66 East HOG Rally 2026",
+  "days": [
+    {
+      "id": "to-mke-day1",
+      "name": "Day 1: Seattle → Missoula",
+      "totalMiles": 493,
+      "totalMinutes": 430,
+      "stops": [
+        { "name": "Mountlake Terrace, WA", "lat": 47.7901, "lon": -122.3079, "mile": 0, "minutesFromStart": 0, "type": "start", "notes": "22705 60th Ave W" },
+        { "name": "Cle Elum, WA", "lat": 47.1954, "lon": -120.9383, "mile": 98, "minutesFromStart": 60, "type": "rest", "notes": "I-90 Exit 84" },
+        { "name": "Vantage, WA", "lat": 46.9458, "lon": -120.0053, "mile": 150, "minutesFromStart": 110, "type": "fuel", "notes": "I-90 Exit 136 ⛽" },
+        { "name": "Moses Lake, WA", "lat": 47.1301, "lon": -119.2782, "mile": 190, "minutesFromStart": 145, "type": "rest", "notes": "I-90 Exit 176 — optional fuel top-off" },
+        { "name": "Ritzville, WA", "lat": 47.1274, "lon": -118.3798, "mile": 234, "minutesFromStart": 185, "type": "lunch", "notes": "I-90 Exit 220 🍽️" },
+        { "name": "Lone Wolf Harley-Davidson", "lat": 47.6858, "lon": -117.1885, "mile": 308, "minutesFromStart": 266, "type": "fuel", "notes": "Spokane Valley ⛽ — planned stop" },
+        { "name": "Kellogg, ID", "lat": 47.5283, "lon": -116.1191, "mile": 383, "minutesFromStart": 326, "type": "fuel", "notes": "I-90 Exit 49 ⛽ — MANDATORY" },
+        { "name": "Lookout Pass, MT", "lat": 47.4470, "lon": -115.6427, "mile": 393, "minutesFromStart": 336, "type": "rest", "notes": "ID/MT border" },
+        { "name": "Missoula, MT", "lat": 46.8721, "lon": -113.9940, "mile": 493, "minutesFromStart": 430, "type": "destination", "notes": "W Broadway St" }
+      ]
+    },
+    {
+      "id": "to-mke-day2",
+      "name": "Day 2: Missoula → Buffalo",
+      "totalMiles": 507,
+      "totalMinutes": 404,
+      "stops": [
+        { "name": "Missoula, MT", "lat": 46.8721, "lon": -113.9940, "mile": 0, "minutesFromStart": 0, "type": "start", "notes": "W Broadway St" },
+        { "name": "Butte, MT", "lat": 46.0038, "lon": -112.5348, "mile": 120, "minutesFromStart": 94, "type": "fuel", "notes": "I-90 Exit 124 ⛽" },
+        { "name": "Livingston, MT", "lat": 45.6627, "lon": -110.5608, "mile": 228, "minutesFromStart": 178, "type": "lunch", "notes": "I-90 Exit 333 🍽️⛽" },
+        { "name": "Billings, MT", "lat": 45.7833, "lon": -108.5007, "mile": 344, "minutesFromStart": 270, "type": "fuel", "notes": "I-90 Exit 450 ⛽ — MANDATORY" },
+        { "name": "Sheridan, WY", "lat": 44.7972, "lon": -106.9563, "mile": 479, "minutesFromStart": 358, "type": "fuel", "notes": "I-90 Exit 23 ⛽" },
+        { "name": "Buffalo, WY", "lat": 44.3483, "lon": -106.6989, "mile": 507, "minutesFromStart": 404, "type": "destination", "notes": "Fort St (US-16)" }
+      ]
+    },
+    {
+      "id": "to-mke-day3",
+      "name": "Day 3: Buffalo → Sioux Falls",
+      "totalMiles": 569,
+      "totalMinutes": 448,
+      "stops": [
+        { "name": "Buffalo, WY", "lat": 44.3483, "lon": -106.6989, "mile": 0, "minutesFromStart": 0, "type": "start", "notes": "Fort St (US-16)" },
+        { "name": "Gillette, WY", "lat": 44.2911, "lon": -105.5022, "mile": 72, "minutesFromStart": 55, "type": "rest", "notes": "I-90 Exit 126" },
+        { "name": "Spearfish, SD", "lat": 44.4908, "lon": -103.8594, "mile": 152, "minutesFromStart": 118, "type": "fuel", "notes": "I-90 Exit 12 ⛽" },
+        { "name": "Rapid City, SD", "lat": 44.0805, "lon": -103.2310, "mile": 210, "minutesFromStart": 165, "type": "rest", "notes": "I-90 Exit 59" },
+        { "name": "Wall, SD (Badlands)", "lat": 43.9925, "lon": -102.2413, "mile": 270, "minutesFromStart": 215, "type": "lunch", "notes": "I-90 Exit 110 → SD-240 🍽️⛽📸HOG" },
+        { "name": "Murdo, SD", "lat": 43.8880, "lon": -100.7126, "mile": 359, "minutesFromStart": 285, "type": "rest", "notes": "I-90 Exit 192 — fuel top-off available" },
+        { "name": "Chamberlain, SD", "lat": 43.8108, "lon": -99.3296, "mile": 427, "minutesFromStart": 335, "type": "fuel", "notes": "I-90 Exit 263 ⛽ — Dignity Statue!" },
+        { "name": "Mitchell, SD", "lat": 43.7094, "lon": -98.0298, "mile": 497, "minutesFromStart": 400, "type": "rest", "notes": "I-90 Exit 330 — Corn Palace 🌽" },
+        { "name": "Sioux Falls, SD", "lat": 43.5460, "lon": -96.7313, "mile": 569, "minutesFromStart": 448, "type": "destination", "notes": "N Minnesota Ave" }
+      ]
+    },
+    {
+      "id": "to-mke-day4",
+      "name": "Day 4: Sioux Falls → Milwaukee",
+      "totalMiles": 527,
+      "totalMinutes": 498,
+      "stops": [
+        { "name": "Sioux Falls, SD", "lat": 43.5460, "lon": -96.7313, "mile": 0, "minutesFromStart": 0, "type": "start", "notes": "S Minnesota Ave" },
+        { "name": "Worthington, MN", "lat": 43.6199, "lon": -95.5966, "mile": 61, "minutesFromStart": 48, "type": "rest", "notes": "I-90 Exit 43" },
+        { "name": "Blue Earth, MN", "lat": 43.6377, "lon": -94.0983, "mile": 138, "minutesFromStart": 116, "type": "fuel", "notes": "I-90 Exit 119 ⛽🟢 Green Giant" },
+        { "name": "Austin, MN", "lat": 43.6666, "lon": -92.9746, "mile": 196, "minutesFromStart": 163, "type": "rest", "notes": "I-90 Exit 178 — Spam Museum 🥫" },
+        { "name": "La Crosse, WI", "lat": 43.8014, "lon": -91.2396, "mile": 293, "minutesFromStart": 246, "type": "lunch", "notes": "I-90 Exit 276 🍽️⛽ Mississippi River" },
+        { "name": "Ferryville, WI", "lat": 43.3487, "lon": -91.0929, "mile": 330, "minutesFromStart": 285, "type": "rest", "notes": "WI-35 Great River Road" },
+        { "name": "Gays Mills, WI", "lat": 43.3233, "lon": -90.8421, "mile": 358, "minutesFromStart": 329, "type": "planned", "notes": "WI-171 🐉 Wisconsin's Dragon" },
+        { "name": "Richland Center, WI", "lat": 43.3344, "lon": -90.3868, "mile": 410, "minutesFromStart": 379, "type": "fuel", "notes": "US-14 ⛽" },
+        { "name": "Oconomowoc, WI", "lat": 43.1119, "lon": -88.4893, "mile": 460, "minutesFromStart": 433, "type": "rest", "notes": "I-94 Exit 282" },
+        { "name": "Milwaukee, WI", "lat": 43.0389, "lon": -87.9065, "mile": 527, "minutesFromStart": 498, "type": "destination", "notes": "N Milwaukee St 🍺" }
+      ]
+    },
+    {
+      "id": "from-ama-day1",
+      "name": "Return 1: Amarillo → Grand Junction",
+      "totalMiles": 579,
+      "totalMinutes": 547,
+      "stops": [
+        { "name": "Amarillo, TX", "lat": 35.2220, "lon": -101.8313, "mile": 0, "minutesFromStart": 0, "type": "start", "notes": "SE 6th Ave" },
+        { "name": "Dumas, TX", "lat": 35.8659, "lon": -101.9732, "mile": 57, "minutesFromStart": 46, "type": "rest", "notes": "US-87 / TX-354" },
+        { "name": "Boise City, OK", "lat": 36.7292, "lon": -102.5151, "mile": 123, "minutesFromStart": 106, "type": "fuel", "notes": "US-385 ⛽ — DON'T SKIP" },
+        { "name": "Walsenburg, CO", "lat": 37.6244, "lon": -104.7808, "mile": 279, "minutesFromStart": 239, "type": "lunch", "notes": "I-25 Exit 56 🍽️⛽" },
+        { "name": "Westcliffe, CO", "lat": 38.1344, "lon": -105.4659, "mile": 335, "minutesFromStart": 295, "type": "rest", "notes": "CO-69 — Sangre de Cristos" },
+        { "name": "Salida, CO", "lat": 38.5347, "lon": -106.0017, "mile": 394, "minutesFromStart": 359, "type": "fuel", "notes": "US-50/US-285 ⛽ — MANDATORY" },
+        { "name": "Montrose, CO", "lat": 38.4783, "lon": -107.8762, "mile": 518, "minutesFromStart": 486, "type": "fuel", "notes": "US-50 ⛽" },
+        { "name": "Grand Junction, CO", "lat": 39.0639, "lon": -108.5506, "mile": 579, "minutesFromStart": 547, "type": "destination", "notes": "S 5th St" }
+      ]
+    },
+    {
+      "id": "from-ama-day2",
+      "name": "Return 2: Grand Junction → Twin Falls",
+      "totalMiles": 500,
+      "totalMinutes": 439,
+      "stops": [
+        { "name": "Grand Junction, CO", "lat": 39.0639, "lon": -108.5506, "mile": 0, "minutesFromStart": 0, "type": "start", "notes": "N 5th St" },
+        { "name": "Green River, UT", "lat": 38.9955, "lon": -110.1627, "mile": 100, "minutesFromStart": 75, "type": "rest", "notes": "I-70 Exit 158 — optional fuel top-off" },
+        { "name": "Price, UT", "lat": 39.5994, "lon": -110.8107, "mile": 157, "minutesFromStart": 135, "type": "fuel", "notes": "US-6/US-191 ⛽" },
+        { "name": "Spanish Fork, UT", "lat": 40.1149, "lon": -111.6549, "mile": 232, "minutesFromStart": 192, "type": "lunch", "notes": "US-6/I-15 🍽️⛽" },
+        { "name": "Tremonton, UT", "lat": 41.7119, "lon": -112.1657, "mile": 354, "minutesFromStart": 273, "type": "fuel", "notes": "I-15/I-84 split ⛽" },
+        { "name": "Burley, ID", "lat": 42.5360, "lon": -113.7928, "mile": 420, "minutesFromStart": 345, "type": "rest", "notes": "I-84 Exit 208" },
+        { "name": "Twin Falls, ID", "lat": 42.5558, "lon": -114.4701, "mile": 500, "minutesFromStart": 439, "type": "destination", "notes": "Shoshone St E" }
+      ]
+    },
+    {
+      "id": "from-ama-day3",
+      "name": "Return 3: Twin Falls → Clarkston",
+      "totalMiles": 421,
+      "totalMinutes": 397,
+      "stops": [
+        { "name": "Twin Falls, ID", "lat": 42.5558, "lon": -114.4701, "mile": 0, "minutesFromStart": 0, "type": "start", "notes": "Shoshone St E" },
+        { "name": "Mountain Home, ID", "lat": 43.1326, "lon": -115.6912, "mile": 80, "minutesFromStart": 60, "type": "rest", "notes": "I-84 Exit 95" },
+        { "name": "Boise, ID", "lat": 43.6150, "lon": -116.2023, "mile": 140, "minutesFromStart": 115, "type": "fuel", "notes": "I-184/Chinden Blvd ⛽" },
+        { "name": "Horseshoe Bend, ID", "lat": 43.9126, "lon": -116.1976, "mile": 175, "minutesFromStart": 150, "type": "rest", "notes": "ID-55 Payette River Scenic Byway" },
+        { "name": "Cascade, ID", "lat": 44.5160, "lon": -116.0419, "mile": 210, "minutesFromStart": 185, "type": "rest", "notes": "ID-55 at Cascade Lake" },
+        { "name": "McCall, ID", "lat": 44.9105, "lon": -116.0988, "mile": 250, "minutesFromStart": 235, "type": "fuel", "notes": "Deinhard Ln ⛽ — MUST FUEL" },
+        { "name": "Riggins, ID", "lat": 45.4205, "lon": -116.3149, "mile": 310, "minutesFromStart": 295, "type": "lunch", "notes": "US-95 Salmon River Canyon 🍽️" },
+        { "name": "Grangeville, ID", "lat": 45.9260, "lon": -116.1225, "mile": 360, "minutesFromStart": 337, "type": "fuel", "notes": "US-95 ⛽ — last reliable fuel" },
+        { "name": "Clarkston, WA", "lat": 46.3931, "lon": -117.0773, "mile": 421, "minutesFromStart": 397, "type": "destination", "notes": "26126 Peola Rd" }
+      ]
+    },
+    {
+      "id": "from-ama-day4",
+      "name": "Return 4: Clarkston → Home",
+      "totalMiles": 325,
+      "totalMinutes": 322,
+      "stops": [
+        { "name": "Clarkston, WA", "lat": 46.3931, "lon": -117.0773, "mile": 0, "minutesFromStart": 0, "type": "start", "notes": "26126 Peola Rd" },
+        { "name": "Pomeroy, WA", "lat": 46.4740, "lon": -117.6046, "mile": 46, "minutesFromStart": 52, "type": "rest", "notes": "US-12 — fuel top-off available" },
+        { "name": "Othello, WA", "lat": 46.8265, "lon": -119.1750, "mile": 133, "minutesFromStart": 124, "type": "fuel", "notes": "WA-26 ⛽ — first major fuel" },
+        { "name": "Vantage, WA", "lat": 46.9458, "lon": -120.0053, "mile": 174, "minutesFromStart": 162, "type": "rest", "notes": "I-90 on-ramp — Columbia River" },
+        { "name": "Ellensburg, WA", "lat": 46.9965, "lon": -120.5478, "mile": 210, "minutesFromStart": 192, "type": "lunch", "notes": "I-90 Exit 106 🍽️⛽" },
+        { "name": "Cle Elum, WA", "lat": 47.1954, "lon": -120.9383, "mile": 245, "minutesFromStart": 222, "type": "rest", "notes": "I-90 Exit 84 — last before pass" },
+        { "name": "Mountlake Terrace, WA", "lat": 47.7901, "lon": -122.3079, "mile": 325, "minutesFromStart": 322, "type": "destination", "notes": "22705 60th Ave W 🏠 HOME!" }
+      ]
+    }
+  ]
+}
