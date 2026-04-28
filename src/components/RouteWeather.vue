@@ -23,65 +23,67 @@ async function refresh(forceRefetch = false) {
   loading.value = true
   forecasts.value = []
 
-  const stops = [...props.day.stops]
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-
-  // Step 1: Get real drive times from Google Distance Matrix (or fallback to static)
-  let driveTimes
   try {
-    driveTimes = await fetchDriveTimes(stops)
-    etaSource.value = 'google'
-  } catch {
-    // Fallback to static minutesFromStart from trip JSON
-    driveTimes = stops.map(s => s.minutesFromStart || 0)
-    etaSource.value = 'static'
-  }
+    const stops = [...props.day.stops]
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
 
-  if (myVersion !== refreshVersion) return
-
-  // Step 2: Fetch weather for each stop with real ETAs
-  const results = []
-  const concurrency = 3
-
-  for (let i = 0; i < stops.length; i += concurrency) {
-    if (myVersion !== refreshVersion) return
-
-    const batch = stops.slice(i, i + concurrency)
-    const batchResults = await Promise.all(batch.map(async (stop, batchIdx) => {
-      const stopIdx = i + batchIdx
-      const arrivalMinutes = props.departureMinutes + (driveTimes[stopIdx] || 0)
-      const arrivalDate = new Date(today.getTime() + arrivalMinutes * 60 * 1000)
-
-      const [nwsResult, omResult] = await Promise.allSettled([
-        fetchNWSForecast(stop, arrivalDate),
-        fetchOMForecast(stop, arrivalDate)
-      ])
-
-      const nws = nwsResult.status === 'fulfilled' ? nwsResult.value : null
-      const om = omResult.status === 'fulfilled' ? omResult.value : null
-      const confidence = calculateConfidence(nws, om)
-
-      return {
-        stop,
-        arrivalTime: arrivalDate,
-        driveMinutes: driveTimes[stopIdx],
-        nws,
-        om,
-        confidence,
-        error: (!nws && !om) ? 'Both sources failed' : null
-      }
-    }))
+    // Step 1: Get real drive times from Google Distance Matrix (or fallback to static)
+    let driveTimes
+    try {
+      driveTimes = await fetchDriveTimes(stops)
+      etaSource.value = 'google'
+    } catch {
+      driveTimes = stops.map(s => s.minutesFromStart || 0)
+      etaSource.value = 'static'
+    }
 
     if (myVersion !== refreshVersion) return
-    results.push(...batchResults)
-    forecasts.value = [...results]
-  }
 
-  if (myVersion !== refreshVersion) return
-  forecasts.value = results
-  loading.value = false
-  lastUpdated.value = new Date()
+    // Step 2: Fetch weather for each stop with real ETAs
+    const results = []
+    const concurrency = 3
+
+    for (let i = 0; i < stops.length; i += concurrency) {
+      if (myVersion !== refreshVersion) return
+
+      const batch = stops.slice(i, i + concurrency)
+      const batchResults = await Promise.all(batch.map(async (stop, batchIdx) => {
+        const stopIdx = i + batchIdx
+        const arrivalMinutes = props.departureMinutes + (driveTimes[stopIdx] || 0)
+        const arrivalDate = new Date(today.getTime() + arrivalMinutes * 60 * 1000)
+
+        const [nwsResult, omResult] = await Promise.allSettled([
+          fetchNWSForecast(stop, arrivalDate),
+          fetchOMForecast(stop, arrivalDate)
+        ])
+
+        const nws = nwsResult.status === 'fulfilled' ? nwsResult.value : null
+        const om = omResult.status === 'fulfilled' ? omResult.value : null
+        const confidence = calculateConfidence(nws, om)
+
+        return {
+          stop,
+          arrivalTime: arrivalDate,
+          driveMinutes: driveTimes[stopIdx],
+          nws,
+          om,
+          confidence,
+          error: (!nws && !om) ? 'Both sources failed' : null
+        }
+      }))
+
+      if (myVersion !== refreshVersion) return
+      results.push(...batchResults)
+      forecasts.value = [...results]
+    }
+
+    if (myVersion !== refreshVersion) return
+    forecasts.value = results
+    lastUpdated.value = new Date()
+  } finally {
+    if (refreshVersion === myVersion) loading.value = false
+  }
 }
 
 // Day change = full refresh (new drive times + weather)

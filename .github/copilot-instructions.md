@@ -3,25 +3,22 @@
 ## Identity & Authentication
 
 ### GitHub
-- **Account:** Pepper-Home / pepper_home@hotmail.com
-- **Git config:** Always set per-repo: `git config user.name "Pepper-Home"` and `git config user.email "pepper_home@hotmail.com"`
+- **Account:** Pepper-Home
+- **Git config:** Always set per-repo: `git config user.name "Pepper-Home"` and `git config user.email` with the account email
 - **Verify before any git operation:** `gh auth status` → expect `Pepper-Home` as active account
 - **Device code auth link:** [https://github.com/login/device](https://github.com/login/device)
 
 ### Azure
-- **Account:** pepper_home@hotmail.com
-- **Subscription:** Austins Great Subscription / `28b104e8-4125-4d0b-a071-0de96207c6e3`
-- **Tenant:** `05005ba0-77d6-412f-b9a0-da39e175a8a0`
-- **Budget:** $150/month — use Free tiers wherever possible
+- **Subscription:** Austins Great Subscription (see Personal-Account-Reference.md for IDs)
 - **Login:** `az login --use-device-code`
 - **Device code auth link:** [https://login.microsoft.com/device](https://login.microsoft.com/device)
-- **After login:** `az account set --subscription "28b104e8-4125-4d0b-a071-0de96207c6e3"`
-- **Verify:** `az account show` → expect `pepper_home@hotmail.com`
+- **After login:** set subscription (see Personal-Account-Reference.md for ID)
+- **Verify:** `az account show` → expect personal account
 
 ### ⚠️ CRITICAL: Private Browser Sessions
 - **ALWAYS provide clickable links** for device code auth flows — user needs to open in a private/incognito browser
 - **NEVER assume** the current az/gh session is the personal account — VERIFY FIRST
-- Work accounts (amager@microsoft.com / amager_microsoft) will conflict if not in private session
+- Work accounts will conflict if not in private session
 
 ## Project Context
 
