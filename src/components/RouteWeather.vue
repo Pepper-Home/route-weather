@@ -2,6 +2,7 @@
 import { ref, watch } from 'vue'
 import StopCard from './StopCard.vue'
 import { useWeather } from '../composables/useWeather'
+import { useOpenMeteo, calculateConfidence } from '../composables/useOpenMeteo'
 
 const props = defineProps({
   day: Object,
@@ -9,11 +10,57 @@ const props = defineProps({
 })
 
 const { loading, lastUpdated, fetchRouteForecasts } = useWeather()
+const { fetchStopForecast: fetchOMForecast } = useOpenMeteo()
 const forecasts = ref([])
 
 async function refresh() {
   if (!props.day?.stops?.length) return
-  forecasts.value = await fetchRouteForecasts(props.day.stops, props.departureMinutes)
+  loading.value = true
+
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  const results = []
+  for (const stop of props.day.stops) {
+    const arrivalMinutes = props.departureMinutes + (stop.minutesFromStart || 0)
+    const arrivalDate = new Date(today.getTime() + arrivalMinutes * 60 * 1000)
+
+    // Fetch both sources in parallel
+    const [nwsResult, omResult] = await Promise.allSettled([
+      fetchNWSForecast(stop, arrivalDate),
+      fetchOMForecast(stop, arrivalDate)
+    ])
+
+    const nws = nwsResult.status === 'fulfilled' ? nwsResult.value : null
+    const om = omResult.status === 'fulfilled' ? omResult.value : null
+    const confidence = calculateConfidence(nws, om)
+
+    results.push({
+      stop,
+      arrivalTime: arrivalDate,
+      nws,
+      om,
+      confidence,
+      error: (!nws && !om) ? 'Both sources failed' : null
+    })
+
+    // Polite delay
+    await new Promise(r => setTimeout(r, 250))
+  }
+
+  forecasts.value = results
+  loading.value = false
+  lastUpdated.value = new Date()
+}
+
+// Extract single-stop NWS fetch from the composable
+async function fetchNWSForecast(stop, arrivalDate) {
+  const { fetchRouteForecasts } = useWeather()
+  // Use the existing per-stop logic
+  try {
+    const results = await fetchRouteForecasts([stop], props.departureMinutes)
+    return results[0]?.forecast || null
+  } catch { return null }
 }
 
 watch(() => [props.day?.id, props.departureMinutes], refresh, { immediate: true })
@@ -55,7 +102,9 @@ function formatTime(date) {
       v-for="(item, i) in forecasts"
       :key="item.stop.name"
       :stop="item.stop"
-      :forecast="item.forecast"
+      :nws="item.nws"
+      :om="item.om"
+      :confidence="item.confidence"
       :arrivalTime="item.arrivalTime"
       :error="item.error"
       :index="i"
