@@ -235,6 +235,7 @@ export function useWeather() {
     loading,
     error,
     lastUpdated,
+    fetchStopForecast,
     fetchRouteForecasts,
     fetchRouteAlerts,
     riderSeverity

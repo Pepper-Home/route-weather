@@ -9,13 +9,14 @@ const props = defineProps({
   departureMinutes: Number
 })
 
-const { loading, lastUpdated, fetchRouteForecasts } = useWeather()
+const { loading, lastUpdated, fetchStopForecast: fetchNWSForecast } = useWeather()
 const { fetchStopForecast: fetchOMForecast } = useOpenMeteo()
 const forecasts = ref([])
 
 async function refresh() {
   if (!props.day?.stops?.length) return
   loading.value = true
+  forecasts.value = []
 
   const today = new Date()
   today.setHours(0, 0, 0, 0)
@@ -44,23 +45,16 @@ async function refresh() {
       error: (!nws && !om) ? 'Both sources failed' : null
     })
 
-    // Polite delay
+    // Show results as they come in
+    forecasts.value = [...results]
+
+    // Polite delay between stops
     await new Promise(r => setTimeout(r, 250))
   }
 
   forecasts.value = results
   loading.value = false
   lastUpdated.value = new Date()
-}
-
-// Extract single-stop NWS fetch from the composable
-async function fetchNWSForecast(stop, arrivalDate) {
-  const { fetchRouteForecasts } = useWeather()
-  // Use the existing per-stop logic
-  try {
-    const results = await fetchRouteForecasts([stop], props.departureMinutes)
-    return results[0]?.forecast || null
-  } catch { return null }
 }
 
 watch(() => [props.day?.id, props.departureMinutes], refresh, { immediate: true })
