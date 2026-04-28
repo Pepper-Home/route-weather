@@ -11,6 +11,7 @@ const timeString = computed({
   },
   set: (val) => {
     const [h, m] = val.split(':').map(Number)
+    if (isNaN(h) || isNaN(m)) return
     model.value = h * 60 + m
   }
 })

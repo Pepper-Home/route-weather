@@ -160,7 +160,6 @@ function riderSeverity(forecast) {
 
 export function useWeather() {
   const loading = ref(false)
-  const error = ref(null)
   const lastUpdated = ref(null)
 
   async function fetchStopForecast(stop, arrivalDate) {
@@ -228,10 +227,8 @@ export function useWeather() {
 
   return {
     loading,
-    error,
     lastUpdated,
     fetchStopForecast,
-    fetchRouteAlerts,
-    riderSeverity
+    fetchRouteAlerts
   }
 }

@@ -83,6 +83,8 @@ async function fetchOpenMeteoHourly(lat, lon) {
 /**
  * Match forecast to target arrival time (same logic as NWS).
  */
+const MAX_FORECAST_DELTA = 2 * 60 * 60 * 1000 // 2 hours max
+
 function matchToTime(periods, targetDate) {
   if (!periods?.length) return null
   const targetMs = targetDate.getTime()
@@ -91,6 +93,9 @@ function matchToTime(periods, targetDate) {
   for (const p of periods) {
     const diff = Math.abs(new Date(p.startTime).getTime() - targetMs)
     if (diff < bestDiff) { bestDiff = diff; best = p }
+  }
+  if (bestDiff > MAX_FORECAST_DELTA) {
+    return { ...best, staleWarning: true, staleDeltaHrs: Math.round(bestDiff / (60 * 60 * 1000)) }
   }
   return best
 }

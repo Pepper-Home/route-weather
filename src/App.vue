@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import TripSelector from './components/TripSelector.vue'
 import DepartureTime from './components/DepartureTime.vue'
 import RouteWeather from './components/RouteWeather.vue'
@@ -7,8 +7,10 @@ import AlertBanner from './components/AlertBanner.vue'
 import OfflineBanner from './components/OfflineBanner.vue'
 import { useTrips } from './composables/useTrips'
 
-const { trips, selectedTrip, selectedDay, selectTrip, selectDay } = useTrips()
+const { trips, selectedTrip, selectedDay, init, selectTrip, selectDay } = useTrips()
 const departureMinutes = ref(480) // 8:00 AM default (minutes since midnight)
+
+onMounted(() => init())
 </script>
 
 <template>

@@ -70,14 +70,12 @@ export function useTrips() {
     localStorage.setItem('rw-last-day', day.id)
   }
 
-  // Auto-init
-  init()
-
   return {
     trips,
     selectedTrip,
     selectedDay,
     loading,
+    init,
     selectTrip,
     selectDay
   }
