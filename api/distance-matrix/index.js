@@ -7,16 +7,35 @@ const CACHE_TTL = 60 * 60 * 1000; // 1 hour
 const KV_SECRET_URL = 'https://kv-route-weather.vault.azure.net/secrets/GoogleMapsApiKey?api-version=7.4';
 
 async function getMIToken() {
-  const endpoint = process.env.IDENTITY_ENDPOINT;
+  // SWA managed functions use MSI_ENDPOINT (older format), not IDENTITY_HEADER
+  const endpoint = process.env.IDENTITY_ENDPOINT || process.env.MSI_ENDPOINT;
   const header = process.env.IDENTITY_HEADER;
+  const msiSecret = process.env.MSI_SECRET;
 
-  if (!endpoint || !header) {
-    throw new Error('Managed Identity not available: IDENTITY_ENDPOINT or IDENTITY_HEADER missing');
+  if (!endpoint) {
+    throw new Error('Managed Identity not available: no IDENTITY_ENDPOINT or MSI_ENDPOINT');
   }
 
-  const url = `${endpoint}?resource=https://vault.azure.net&api-version=2019-08-01`;
-  const res = await fetch(url, { headers: { 'X-IDENTITY-HEADER': header } });
-  if (!res.ok) throw new Error(`MI token request failed: ${res.status}`);
+  let url, headers;
+  if (header) {
+    // Newer format (App Service / Azure Functions)
+    url = `${endpoint}?resource=https://vault.azure.net&api-version=2019-08-01`;
+    headers = { 'X-IDENTITY-HEADER': header };
+  } else if (msiSecret) {
+    // Older MSI format
+    url = `${endpoint}?resource=https://vault.azure.net&api-version=2017-09-01`;
+    headers = { 'Secret': msiSecret };
+  } else {
+    // SWA managed functions — try without secret header
+    url = `${endpoint}?resource=https://vault.azure.net&api-version=2019-08-01`;
+    headers = {};
+  }
+
+  const res = await fetch(url, { headers });
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`MI token request failed: ${res.status} — ${body.substring(0, 200)}`);
+  }
 
   const data = await res.json();
   return data.access_token;
