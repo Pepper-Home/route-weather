@@ -6,8 +6,11 @@ module.exports = async function (context, req) {
       ok: true,
       hasIdentityEndpoint: !!process.env.IDENTITY_ENDPOINT,
       hasIdentityHeader: !!process.env.IDENTITY_HEADER,
+      hasMsiEndpoint: !!process.env.MSI_ENDPOINT,
+      hasMsiSecret: !!process.env.MSI_SECRET,
       nodeVersion: process.version,
-      identityVars: Object.keys(process.env).filter(k => k.includes('IDENTITY') || k.includes('MSI') || k.includes('AZURE'))
+      identityEndpointValue: process.env.IDENTITY_ENDPOINT?.substring(0, 50) + '...',
+      allEnvKeys: Object.keys(process.env).sort()
     })
   };
 };
