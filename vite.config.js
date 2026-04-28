@@ -41,6 +41,22 @@ export default defineConfig({
               cacheName: 'open-meteo-cache',
               expiration: { maxEntries: 100, maxAgeSeconds: 3600 }
             }
+          },
+          {
+            urlPattern: /\/api\/distance-matrix/i,
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'distance-matrix-cache',
+              expiration: { maxEntries: 50, maxAgeSeconds: 14400 }
+            }
+          },
+          {
+            urlPattern: /\/trips\/.*\.json$/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'trip-data-cache',
+              expiration: { maxEntries: 20, maxAgeSeconds: 86400 }
+            }
           }
         ]
       }

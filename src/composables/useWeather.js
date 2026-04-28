@@ -190,8 +190,9 @@ export function useWeather() {
     const seen = new Set()
     const fetchedZones = new Set()
 
+    // Deduplicate stops by forecast zone (from grid cache)
+    const uniqueStops = []
     for (const stop of stops) {
-      // Deduplicate by forecast zone from grid cache
       const gridKey = `nws-grid-${stop.lat.toFixed(4)},${stop.lon.toFixed(4)}`
       let zone = null
       try {
@@ -204,15 +205,24 @@ export function useWeather() {
 
       if (zone && fetchedZones.has(zone)) continue
       if (zone) fetchedZones.add(zone)
+      uniqueStops.push(stop)
+    }
 
-      const alerts = await getAlerts(stop.lat, stop.lon)
-      for (const a of alerts) {
+    // Fetch all unique zones in parallel
+    const results = await Promise.allSettled(
+      uniqueStops.map(stop => getAlerts(stop.lat, stop.lon).then(alerts => ({ alerts, stop })))
+    )
+
+    for (const r of results) {
+      if (r.status !== 'fulfilled') continue
+      for (const a of r.value.alerts) {
         if (!seen.has(a.headline)) {
           seen.add(a.headline)
-          allAlerts.push({ ...a, nearStop: stop.name })
+          allAlerts.push({ ...a, nearStop: r.value.stop.name })
         }
       }
     }
+
     return allAlerts
   }
 

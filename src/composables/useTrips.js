@@ -30,15 +30,13 @@ export function useTrips() {
     loading.value = true
     try {
       const index = await loadTripIndex()
-      const loaded = []
-      for (const entry of index) {
-        try {
-          const trip = await loadTrip(entry.file)
-          loaded.push(trip)
-        } catch (e) {
-          console.warn(`Failed to load trip ${entry.file}:`, e)
-        }
-      }
+      const results = await Promise.allSettled(index.map(entry => loadTrip(entry.file)))
+      const loaded = results
+        .filter(r => r.status === 'fulfilled')
+        .map(r => r.value)
+      results
+        .filter(r => r.status === 'rejected')
+        .forEach((r, i) => console.warn(`Failed to load trip ${index[i]?.file}:`, r.reason))
       trips.value = loaded
 
       // Restore last selection from localStorage

@@ -16,8 +16,13 @@ const forecasts = ref([])
 const etaSource = ref('static') // 'google' or 'static' (fallback)
 
 let refreshVersion = 0
+let abortController = null
 
 async function refresh(forceRefetch = false) {
+  // Cancel any in-flight request
+  if (abortController) abortController.abort()
+  abortController = new AbortController()
+  const signal = abortController.signal
   if (!props.day?.stops?.length) return
   const myVersion = ++refreshVersion
   loading.value = true
@@ -31,7 +36,7 @@ async function refresh(forceRefetch = false) {
     // Step 1: Get real drive times from Google Distance Matrix (or fallback to static)
     let driveTimes
     try {
-      driveTimes = await fetchDriveTimes(stops)
+      driveTimes = await fetchDriveTimes(stops, signal)
       etaSource.value = 'google'
     } catch {
       driveTimes = stops.map(s => s.minutesFromStart || 0)
