@@ -69,7 +69,7 @@ function weatherEmoji(desc) {
         </span>
       </div>
       <div class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-        mi {{ stop.mile }} · ETA {{ formatTime(arrivalTime) }}
+        mi {{ stop.mile }} · ETA {{ formatTime(arrivalTime) }} <span v-if="stop.tz" class="text-yellow-600 dark:text-yellow-400">({{ stop.tz }})</span>
         <span v-if="stop.notes" class="ml-1">· {{ stop.notes }}</span>
       </div>
     </div>
@@ -116,6 +116,14 @@ function weatherEmoji(desc) {
       }"
     >
       {{ confidence.emoji }} Confidence: <strong>{{ confidence.level.toUpperCase() }}</strong> · {{ confidence.details }}
+    </div>
+
+    <!-- Stale forecast warning -->
+    <div
+      v-if="nws?.staleWarning || om?.staleWarning"
+      class="px-3 py-1.5 text-[10px] bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 border-t border-red-200"
+    >
+      ⚠️ Forecast may be inaccurate — closest available data is {{ nws?.staleDeltaHrs || om?.staleDeltaHrs }}+ hours from your ETA
     </div>
 
     <!-- Error state -->

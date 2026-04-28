@@ -16,14 +16,5 @@ export function useOffline() {
     window.removeEventListener('offline', handleOffline)
   })
 
-  function getLastUpdated(key) {
-    try {
-      const raw = localStorage.getItem(key)
-      if (!raw) return null
-      const { ts } = JSON.parse(raw)
-      return new Date(ts)
-    } catch { return null }
-  }
-
-  return { isOffline, getLastUpdated }
+  return { isOffline }
 }

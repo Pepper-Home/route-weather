@@ -21,7 +21,7 @@ function degToCompass(deg) {
 }
 
 function cacheKey(lat, lon) {
-  return `om-${lat.toFixed(2)},${lon.toFixed(2)}`
+  return `om-${lat.toFixed(4)},${lon.toFixed(4)}`
 }
 
 function getCached(key) {

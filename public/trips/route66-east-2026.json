@@ -8,7 +8,7 @@
       "totalMiles": 493,
       "totalMinutes": 430,
       "stops": [
-        { "name": "Mountlake Terrace, WA", "lat": 47.7901, "lon": -122.3079, "mile": 0, "minutesFromStart": 0, "type": "start", "notes": "22705 60th Ave W" },
+        { "name": "Mountlake Terrace, WA", "lat": 47.7743, "lon": -122.3057, "mile": 0, "minutesFromStart": 0, "type": "start", "notes": "Mountlake Terrace, WA" },
         { "name": "Cle Elum, WA", "lat": 47.1954, "lon": -120.9383, "mile": 98, "minutesFromStart": 60, "type": "rest", "notes": "I-90 Exit 84" },
         { "name": "Vantage, WA", "lat": 46.9458, "lon": -120.0053, "mile": 150, "minutesFromStart": 110, "type": "fuel", "notes": "I-90 Exit 136 ⛽" },
         { "name": "Moses Lake, WA", "lat": 47.1301, "lon": -119.2782, "mile": 190, "minutesFromStart": 145, "type": "rest", "notes": "I-90 Exit 176 — optional fuel top-off" },
@@ -128,7 +128,7 @@
         { "name": "Vantage, WA", "lat": 46.9458, "lon": -120.0053, "mile": 174, "minutesFromStart": 162, "type": "rest", "notes": "I-90 on-ramp — Columbia River" },
         { "name": "Ellensburg, WA", "lat": 46.9965, "lon": -120.5478, "mile": 210, "minutesFromStart": 192, "type": "lunch", "notes": "I-90 Exit 106 🍽️⛽" },
         { "name": "Cle Elum, WA", "lat": 47.1954, "lon": -120.9383, "mile": 245, "minutesFromStart": 222, "type": "rest", "notes": "I-90 Exit 84 — last before pass" },
-        { "name": "Mountlake Terrace, WA", "lat": 47.7901, "lon": -122.3079, "mile": 325, "minutesFromStart": 322, "type": "destination", "notes": "22705 60th Ave W 🏠 HOME!" }
+        { "name": "Mountlake Terrace, WA", "lat": 47.7743, "lon": -122.3057, "mile": 325, "minutesFromStart": 322, "type": "destination", "notes": "Mountlake Terrace, WA 🏠 HOME!" }
       ]
     }
   ]

@@ -1,8 +1,8 @@
-import { ref, shallowRef } from 'vue'
+import { ref } from 'vue'
 
 const NWS_BASE = 'https://api.weather.gov'
 const CACHE_TTL = 60 * 60 * 1000 // 1 hour
-const NWS_HEADERS = { 'User-Agent': 'RouteWeatherApp/1.0 (pepper_home@hotmail.com)', Accept: 'application/geo+json' }
+const NWS_HEADERS = { 'User-Agent': 'RouteWeatherApp/1.0 (github.com/Pepper-Home/route-weather)', Accept: 'application/geo+json' }
 
 function cacheKey(lat, lon) {
   return `nws-${lat.toFixed(4)},${lon.toFixed(4)}`
@@ -30,14 +30,17 @@ async function fetchJson(url) {
   return res.json()
 }
 
-/**
- * Get the NWS forecast grid endpoint for a lat/lon point.
- * Cached indefinitely — grid points don't change.
- */
+const GRID_CACHE_TTL = 30 * 24 * 60 * 60 * 1000 // 30 days
+
 async function getGridPoint(lat, lon) {
   const key = `nws-grid-${lat.toFixed(4)},${lon.toFixed(4)}`
-  const cached = localStorage.getItem(key)
-  if (cached) return JSON.parse(cached)
+  try {
+    const raw = localStorage.getItem(key)
+    if (raw) {
+      const { data, ts } = JSON.parse(raw)
+      if (Date.now() - ts < GRID_CACHE_TTL) return data
+    }
+  } catch { /* corrupted cache — refetch */ }
 
   const data = await fetchJson(`${NWS_BASE}/points/${lat.toFixed(4)},${lon.toFixed(4)}`)
   const result = {
@@ -46,7 +49,9 @@ async function getGridPoint(lat, lon) {
     county: data.properties.county,
     forecastZone: data.properties.forecastZone
   }
-  localStorage.setItem(key, JSON.stringify(result))
+  try {
+    localStorage.setItem(key, JSON.stringify({ data: result, ts: Date.now() }))
+  } catch { /* storage full */ }
   return result
 }
 
@@ -81,6 +86,8 @@ async function getHourlyForecast(lat, lon) {
  * Match forecast periods to a target arrival time.
  * Returns the period whose start hour is closest to the target.
  */
+const MAX_FORECAST_DELTA = 2 * 60 * 60 * 1000 // 2 hours max
+
 function matchForecastToTime(periods, targetDate) {
   if (!periods?.length) return null
   const targetMs = targetDate.getTime()
@@ -94,6 +101,11 @@ function matchForecastToTime(periods, targetDate) {
       bestDiff = diff
       best = p
     }
+  }
+
+  // Safety: if best match is >2 hours off, forecast is unreliable
+  if (bestDiff > MAX_FORECAST_DELTA) {
+    return { ...best, staleWarning: true, staleDeltaHrs: Math.round(bestDiff / (60 * 60 * 1000)) }
   }
   return best
 }
@@ -173,61 +185,34 @@ export function useWeather() {
     }
   }
 
-  async function fetchRouteForecasts(stops, departureMinutes) {
-    loading.value = true
-    error.value = null
-
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-
-    const results = []
-
-    for (const stop of stops) {
-      const arrivalMinutes = departureMinutes + (stop.minutesFromStart || 0)
-      const arrivalDate = new Date(today.getTime() + arrivalMinutes * 60 * 1000)
-
-      try {
-        const forecast = await fetchStopForecast(stop, arrivalDate)
-        results.push({
-          stop,
-          arrivalTime: arrivalDate,
-          forecast,
-          error: null
-        })
-      } catch (e) {
-        results.push({
-          stop,
-          arrivalTime: arrivalDate,
-          forecast: null,
-          error: e.message
-        })
-      }
-
-      // Be polite to NWS — 200ms between requests
-      await new Promise(r => setTimeout(r, 200))
-    }
-
-    loading.value = false
-    lastUpdated.value = new Date()
-    return results
-  }
-
   async function fetchRouteAlerts(stops) {
     const allAlerts = []
     const seen = new Set()
+    const fetchedZones = new Set()
 
     for (const stop of stops) {
+      // Deduplicate by forecast zone from grid cache
+      const gridKey = `nws-grid-${stop.lat.toFixed(4)},${stop.lon.toFixed(4)}`
+      let zone = null
+      try {
+        const raw = localStorage.getItem(gridKey)
+        if (raw) {
+          const { data } = JSON.parse(raw)
+          zone = data.forecastZone || data.county
+        }
+      } catch { /* no cached grid */ }
+
+      if (zone && fetchedZones.has(zone)) continue
+      if (zone) fetchedZones.add(zone)
+
       const alerts = await getAlerts(stop.lat, stop.lon)
       for (const a of alerts) {
-        const key = a.headline
-        if (!seen.has(key)) {
-          seen.add(key)
+        if (!seen.has(a.headline)) {
+          seen.add(a.headline)
           allAlerts.push({ ...a, nearStop: stop.name })
         }
       }
-      await new Promise(r => setTimeout(r, 200))
     }
-
     return allAlerts
   }
 
@@ -236,7 +221,6 @@ export function useWeather() {
     error,
     lastUpdated,
     fetchStopForecast,
-    fetchRouteForecasts,
     fetchRouteAlerts,
     riderSeverity
   }

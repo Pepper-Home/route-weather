@@ -24,13 +24,21 @@ export default defineConfig({
         ]
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,json}'],
+        globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/api\.weather\.gov\/.*/i,
             handler: 'NetworkFirst',
             options: {
               cacheName: 'nws-api-cache',
+              expiration: { maxEntries: 100, maxAgeSeconds: 3600 }
+            }
+          },
+          {
+            urlPattern: /^https:\/\/api\.open-meteo\.com\/.*/i,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'open-meteo-cache',
               expiration: { maxEntries: 100, maxAgeSeconds: 3600 }
             }
           }
