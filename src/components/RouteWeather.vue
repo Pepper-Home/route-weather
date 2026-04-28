@@ -14,6 +14,7 @@ const { loading, lastUpdated, fetchStopForecast: fetchNWSForecast } = useWeather
 const { fetchStopForecast: fetchOMForecast } = useOpenMeteo()
 const forecasts = ref([])
 const etaSource = ref('static') // 'google' or 'static' (fallback)
+const refreshFlash = ref(false)
 
 let refreshVersion = 0
 let abortController = null
@@ -87,6 +88,9 @@ async function refresh(forceRefetch = false) {
     if (myVersion !== refreshVersion) return
     forecasts.value = results
     lastUpdated.value = new Date()
+    // Flash confirmation
+    refreshFlash.value = true
+    setTimeout(() => { refreshFlash.value = false }, 2000)
   } finally {
     if (refreshVersion === myVersion) loading.value = false
   }
@@ -121,13 +125,26 @@ function formatTime(date) {
           Updated {{ formatTime(lastUpdated) }}
         </span>
         <button
-          @click="refresh"
+          @click="refresh(true)"
           :disabled="loading"
-          class="text-xs bg-blue-500 text-white rounded-full px-3 py-1 hover:bg-blue-600 disabled:opacity-50"
+          class="text-xs rounded-full px-3 py-1 transition-all duration-300"
+          :class="refreshFlash
+            ? 'bg-green-500 text-white'
+            : loading
+              ? 'bg-gray-400 text-white'
+              : 'bg-blue-500 text-white hover:bg-blue-600'"
         >
-          {{ loading ? '⏳ Loading...' : '🔄 Refresh' }}
+          {{ refreshFlash ? '✅ Updated!' : loading ? '⏳ Loading...' : '🔄 Refresh' }}
         </button>
       </div>
+    </div>
+
+    <!-- Refresh confirmation -->
+    <div
+      v-if="refreshFlash"
+      class="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 text-xs text-center py-1.5 rounded-lg font-semibold transition-all"
+    >
+      ✅ Forecasts updated at {{ formatTime(lastUpdated) }}
     </div>
 
     <!-- Loading skeleton -->
