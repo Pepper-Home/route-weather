@@ -3,6 +3,7 @@ import { ref, watch } from 'vue'
 import StopCard from './StopCard.vue'
 import { useWeather } from '../composables/useWeather'
 import { useOpenMeteo, calculateConfidence } from '../composables/useOpenMeteo'
+import { fetchDriveTimes } from '../composables/useDistanceMatrix'
 
 const props = defineProps({
   day: Object,
@@ -12,59 +13,44 @@ const props = defineProps({
 const { loading, lastUpdated, fetchStopForecast: fetchNWSForecast } = useWeather()
 const { fetchStopForecast: fetchOMForecast } = useOpenMeteo()
 const forecasts = ref([])
+const etaSource = ref('static') // 'google' or 'static' (fallback)
 
-// Cached raw periods per stop — re-match without re-fetching on departure time change
-const cachedPeriods = new Map()
 let refreshVersion = 0
-
-async function fetchAndCache(stop) {
-  const key = `${stop.lat},${stop.lon}`
-  if (cachedPeriods.has(key)) return cachedPeriods.get(key)
-
-  const [nwsResult, omResult] = await Promise.allSettled([
-    fetchNWSRaw(stop),
-    fetchOMRaw(stop)
-  ])
-
-  const entry = {
-    nwsPeriods: nwsResult.status === 'fulfilled' ? nwsResult.value : null,
-    omPeriods: omResult.status === 'fulfilled' ? omResult.value : null
-  }
-  cachedPeriods.set(key, entry)
-  return entry
-}
-
-async function fetchNWSRaw(stop) {
-  // Access the raw hourly periods via the internal NWS fetch
-  const forecast = await fetchNWSForecast(stop, new Date())
-  // fetchStopForecast already caches — we re-fetch from cache below
-  return null // we'll use the composable's matched result directly
-}
-
-async function fetchOMRaw(stop) {
-  return null
-}
 
 async function refresh(forceRefetch = false) {
   if (!props.day?.stops?.length) return
   const myVersion = ++refreshVersion
   loading.value = true
-  if (forceRefetch) cachedPeriods.clear()
+  forecasts.value = []
 
+  const stops = [...props.day.stops]
   const today = new Date()
   today.setHours(0, 0, 0, 0)
 
+  // Step 1: Get real drive times from Google Distance Matrix (or fallback to static)
+  let driveTimes
+  try {
+    driveTimes = await fetchDriveTimes(stops)
+    etaSource.value = 'google'
+  } catch {
+    // Fallback to static minutesFromStart from trip JSON
+    driveTimes = stops.map(s => s.minutesFromStart || 0)
+    etaSource.value = 'static'
+  }
+
+  if (myVersion !== refreshVersion) return
+
+  // Step 2: Fetch weather for each stop with real ETAs
   const results = []
-  // Process stops with bounded concurrency (3 at a time)
-  const stops = [...props.day.stops]
   const concurrency = 3
 
   for (let i = 0; i < stops.length; i += concurrency) {
-    if (myVersion !== refreshVersion) return // stale — abort
+    if (myVersion !== refreshVersion) return
 
     const batch = stops.slice(i, i + concurrency)
-    const batchResults = await Promise.all(batch.map(async (stop) => {
-      const arrivalMinutes = props.departureMinutes + (stop.minutesFromStart || 0)
+    const batchResults = await Promise.all(batch.map(async (stop, batchIdx) => {
+      const stopIdx = i + batchIdx
+      const arrivalMinutes = props.departureMinutes + (driveTimes[stopIdx] || 0)
       const arrivalDate = new Date(today.getTime() + arrivalMinutes * 60 * 1000)
 
       const [nwsResult, omResult] = await Promise.allSettled([
@@ -79,6 +65,7 @@ async function refresh(forceRefetch = false) {
       return {
         stop,
         arrivalTime: arrivalDate,
+        driveMinutes: driveTimes[stopIdx],
         nws,
         om,
         confidence,
@@ -86,7 +73,7 @@ async function refresh(forceRefetch = false) {
       }
     }))
 
-    if (myVersion !== refreshVersion) return // stale — abort
+    if (myVersion !== refreshVersion) return
     results.push(...batchResults)
     forecasts.value = [...results]
   }
@@ -97,7 +84,8 @@ async function refresh(forceRefetch = false) {
   lastUpdated.value = new Date()
 }
 
-// Debounce departure time changes — only re-fetch on day change
+// Day change = full refresh (new drive times + weather)
+// Departure time change = debounced re-match only
 let debounceTimer = null
 watch(() => props.day?.id, () => refresh(true), { immediate: true })
 watch(() => props.departureMinutes, () => {
@@ -117,6 +105,8 @@ function formatTime(date) {
     <div class="flex items-center justify-between">
       <h2 class="text-sm font-bold text-gray-600 dark:text-gray-400">
         {{ day.stops.length }} stops · {{ day.totalMiles }} mi
+        <span v-if="etaSource === 'google'" class="text-green-600 text-xs ml-1">📍 Live ETAs</span>
+        <span v-else class="text-yellow-600 text-xs ml-1">⚠️ Estimated ETAs</span>
       </h2>
       <div class="flex items-center gap-2">
         <span v-if="lastUpdated" class="text-xs text-gray-400">
