@@ -96,41 +96,72 @@ function matchToTime(periods, targetDate) {
 }
 
 /**
+ * Classify weather description into semantic groups for comparison.
+ * Groups that are "close enough" get smaller penalties than true mismatches.
+ */
+function conditionGroup(desc) {
+  if (desc.includes('thunder') || desc.includes('storm')) return 'storm'
+  if (desc.includes('snow') || desc.includes('ice') || desc.includes('sleet') || desc.includes('freezing')) return 'winter'
+  if (desc.includes('rain') || desc.includes('shower') || desc.includes('drizzle')) return 'rain'
+  if (desc.includes('fog') || desc.includes('mist') || desc.includes('haze')) return 'fog'
+  if (desc.includes('cloud') || desc.includes('overcast') || desc.includes('partly')) return 'cloudy'
+  if (desc.includes('clear') || desc.includes('sun') || desc.includes('fair')) return 'clear'
+  return 'other'
+}
+
+/**
  * Calculate confidence rating by comparing NWS and Open-Meteo forecasts.
+ * Tuned for motorcycle riders: wind weighted heavier, temp differences softened,
+ * condition matching uses semantic groups rather than exact keyword overlap.
  * Returns { level: 'high'|'medium'|'low', score: 0-100, details: string }
  */
 export function calculateConfidence(nws, om) {
   if (!nws || !om) return { level: 'unknown', score: 0, emoji: '❓', details: 'Missing data from one source' }
 
-  // Temperature difference
+  // Temperature difference — softened: <5°F is noise, only penalize hard above 10°F
   const tempDiff = Math.abs((nws.temperature || 0) - (om.temperature || 0))
+  const tempPenalty = tempDiff <= 5 ? tempDiff * 1 : 5 + (tempDiff - 5) * 3
 
-  // Precipitation difference
+  // Precipitation difference — meaningful for ride planning
   const precipDiff = Math.abs(
     (nws.probabilityOfPrecipitation || 0) - (om.probabilityOfPrecipitation || 0)
   )
+  const precipPenalty = precipDiff <= 10 ? precipDiff * 0.3 : 3 + (precipDiff - 10) * 0.8
 
-  // Wind speed difference
+  // Wind speed difference — HEAVY weight for motorcycles
   const nwsWind = parseInt(nws.windSpeed) || 0
   const omWind = om.windSpeedNum || 0
   const windDiff = Math.abs(nwsWind - omWind)
+  const windPenalty = windDiff <= 5 ? windDiff * 1 : 5 + (windDiff - 5) * 3
 
-  // Conditions agreement (rough match)
-  const nwsDesc = (nws.shortForecast || '').toLowerCase()
-  const omDesc = (om.shortForecast || '').toLowerCase()
-  const bothRain = (nwsDesc.includes('rain') || nwsDesc.includes('shower')) &&
-                   (omDesc.includes('rain') || omDesc.includes('shower'))
-  const bothClear = (nwsDesc.includes('clear') || nwsDesc.includes('sunny')) &&
-                    (omDesc.includes('clear') || omDesc.includes('sunny'))
-  const bothCloudy = nwsDesc.includes('cloud') && omDesc.includes('cloud')
-  const conditionsAgree = bothRain || bothClear || bothCloudy
+  // Conditions: semantic group matching instead of keyword overlap
+  const nwsGroup = conditionGroup((nws.shortForecast || '').toLowerCase())
+  const omGroup = conditionGroup((om.shortForecast || '').toLowerCase())
+  let condPenalty = 0
+  if (nwsGroup === omGroup) {
+    condPenalty = 0       // same group — no penalty
+  } else if (
+    (nwsGroup === 'clear' && omGroup === 'cloudy') ||
+    (nwsGroup === 'cloudy' && omGroup === 'clear')
+  ) {
+    condPenalty = 5       // clear vs cloudy — minor, both dry
+  } else if (
+    (nwsGroup === 'clear' && omGroup === 'fog') ||
+    (nwsGroup === 'fog' && omGroup === 'clear') ||
+    (nwsGroup === 'cloudy' && omGroup === 'fog') ||
+    (nwsGroup === 'fog' && omGroup === 'cloudy')
+  ) {
+    condPenalty = 10      // fog is a real rider concern but not precip
+  } else {
+    condPenalty = 20      // actual category mismatch (rain vs clear, storm vs cloudy, etc.)
+  }
 
-  // Score: start at 100, subtract for disagreements
+  // Score
   let score = 100
-  score -= Math.min(tempDiff * 4, 30)       // up to -30 for temp
-  score -= Math.min(precipDiff * 0.5, 25)    // up to -25 for precip
-  score -= Math.min(windDiff * 2, 20)        // up to -20 for wind
-  if (!conditionsAgree) score -= 15          // -15 if conditions don't match
+  score -= Math.min(tempPenalty, 25)    // up to -25 for temp
+  score -= Math.min(precipPenalty, 25)  // up to -25 for precip
+  score -= Math.min(windPenalty, 30)    // up to -30 for wind (heaviest — motorcycle!)
+  score -= condPenalty                  // 0 to -20 for conditions
   score = Math.max(0, Math.round(score))
 
   let level, emoji
