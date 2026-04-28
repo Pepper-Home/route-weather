@@ -38,7 +38,8 @@ async function refresh(forceRefetch = false) {
     try {
       driveTimes = await fetchDriveTimes(stops, signal)
       etaSource.value = 'google'
-    } catch {
+    } catch (e) {
+      if (e.name === 'AbortError') return // aborted — newer refresh will handle it
       driveTimes = stops.map(s => s.minutesFromStart || 0)
       etaSource.value = 'static'
     }
