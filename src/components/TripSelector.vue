@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue'
+import TripImporter from './TripImporter.vue'
 
 defineProps({
   trips: Array,
@@ -8,42 +9,29 @@ defineProps({
 })
 const emit = defineEmits(['select-trip', 'select-day', 'import-trip', 'remove-trip'])
 
-const showImport = ref(false)
-const importError = ref('')
-const showDeleteConfirm = ref(null) // trip ID to confirm delete
-
-function handleFileImport(event) {
-  const file = event.target.files[0]
-  if (!file) return
-  importError.value = ''
-
-  const reader = new FileReader()
-  reader.onload = (e) => {
-    try {
-      const json = JSON.parse(e.target.result)
-      emit('import-trip', json)
-      showImport.value = false
-      event.target.value = '' // reset file input
-    } catch (err) {
-      importError.value = err.message || 'Invalid JSON file'
-    }
-  }
-  reader.readAsText(file)
-}
+const showImporter = ref(false)
+const showDeleteConfirm = ref(null)
 </script>
 
 <template>
   <div class="space-y-3">
+    <!-- Trip Importer (full panel when open) -->
+    <TripImporter
+      v-if="showImporter"
+      @import-trip="(t) => { emit('import-trip', t); showImporter = false }"
+      @close="showImporter = false"
+    />
+
     <!-- Trip picker + manage buttons -->
-    <div>
+    <div v-if="!showImporter">
       <div class="flex items-center justify-between mb-1">
         <label class="text-sm font-semibold text-gray-600 dark:text-gray-400">Trip</label>
         <div class="flex gap-2">
           <button
-            @click="showImport = !showImport"
+            @click="showImporter = true"
             class="text-xs bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded transition-colors"
           >
-            📥 Import
+            ➕ New Trip
           </button>
           <button
             v-if="selectedTrip"
@@ -55,23 +43,10 @@ function handleFileImport(event) {
         </div>
       </div>
 
-      <!-- Import panel -->
-      <div v-if="showImport" class="mb-2 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
-        <p class="text-xs text-gray-600 dark:text-gray-400 mb-2">Import a trip JSON file:</p>
-        <input
-          type="file"
-          accept=".json"
-          @change="handleFileImport"
-          class="text-xs w-full"
-        />
-        <p v-if="importError" class="text-xs text-red-500 mt-1">❌ {{ importError }}</p>
-        <button @click="showImport = false" class="text-xs text-gray-500 mt-1 underline">Cancel</button>
-      </div>
-
       <!-- Delete confirmation -->
       <div v-if="showDeleteConfirm" class="mb-2 p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
         <p class="text-sm text-red-700 dark:text-red-300 font-semibold">Remove "{{ selectedTrip?.name }}"?</p>
-        <p class="text-xs text-gray-500 mt-1">This hides the trip from the selector. Use Clear Cache to restore built-in trips.</p>
+        <p class="text-xs text-gray-500 mt-1">This hides the trip. Use Clear Cache to restore built-in trips.</p>
         <div class="flex gap-2 mt-2">
           <button @click="emit('remove-trip', showDeleteConfirm); showDeleteConfirm = null" class="text-xs bg-red-500 text-white px-3 py-1 rounded">Yes, remove</button>
           <button @click="showDeleteConfirm = null" class="text-xs bg-gray-300 text-gray-700 px-3 py-1 rounded">Cancel</button>
@@ -89,7 +64,7 @@ function handleFileImport(event) {
     </div>
 
     <!-- Day picker -->
-    <div v-if="selectedTrip">
+    <div v-if="selectedTrip && !showImporter">
       <label class="block text-sm font-semibold text-gray-600 dark:text-gray-400 mb-1">Day</label>
       <div class="grid grid-cols-1 gap-2">
         <button
