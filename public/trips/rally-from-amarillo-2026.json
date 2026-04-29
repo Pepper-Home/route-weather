@@ -1,0 +1,317 @@
+{
+  "id": "rally-from-amarillo-2026",
+  "days": [
+    {
+      "id": "from-ama-day1",
+      "name": "Return 1: Amarillo → Grand Junction",
+      "totalMiles": 579,
+      "totalMinutes": 630.0,
+      "stops": [
+        {
+          "name": "Amarillo, TX",
+          "lat": 35.222,
+          "lon": -101.8313,
+          "mile": 0,
+          "minutesFromStart": 0,
+          "type": "start",
+          "notes": "SE 6th Ave"
+        },
+        {
+          "name": "Dumas, TX",
+          "lat": 35.8659,
+          "lon": -101.9732,
+          "mile": 57,
+          "minutesFromStart": 44.0,
+          "type": "rest",
+          "notes": "US-87 / TX-354"
+        },
+        {
+          "name": "Boise City, OK",
+          "lat": 36.7292,
+          "lon": -102.5151,
+          "mile": 123,
+          "minutesFromStart": 113.0,
+          "type": "fuel",
+          "notes": "US-385 ⛽ — DON'T SKIP"
+        },
+        {
+          "name": "Walsenburg, CO",
+          "lat": 37.6244,
+          "lon": -104.7808,
+          "mile": 279,
+          "minutesFromStart": 285.0,
+          "type": "lunch",
+          "notes": "I-25 Exit 56 🍽️⛽"
+        },
+        {
+          "name": "Westcliffe, CO",
+          "lat": 38.1344,
+          "lon": -105.4659,
+          "mile": 335,
+          "minutesFromStart": 352.0,
+          "type": "rest",
+          "notes": "CO-69 — Sangre de Cristos"
+        },
+        {
+          "name": "Salida, CO",
+          "lat": 38.5347,
+          "lon": -106.0017,
+          "mile": 394,
+          "minutesFromStart": 413.0,
+          "type": "fuel",
+          "notes": "US-50/US-285 ⛽ — MANDATORY"
+        },
+        {
+          "name": "Montrose, CO",
+          "lat": 38.4783,
+          "lon": -107.8762,
+          "mile": 518,
+          "minutesFromStart": 558.0,
+          "type": "fuel",
+          "notes": "US-50 ⛽"
+        },
+        {
+          "name": "Grand Junction, CO",
+          "lat": 39.0639,
+          "lon": -108.5506,
+          "mile": 579,
+          "minutesFromStart": 630.0,
+          "type": "destination",
+          "notes": "S 5th St"
+        }
+      ]
+    },
+    {
+      "id": "from-ama-day2",
+      "name": "Return 2: Grand Junction → Twin Falls",
+      "totalMiles": 500,
+      "totalMinutes": 486.0,
+      "stops": [
+        {
+          "name": "Grand Junction, CO",
+          "lat": 39.0639,
+          "lon": -108.5506,
+          "mile": 0,
+          "minutesFromStart": 0,
+          "type": "start",
+          "notes": "N 5th St"
+        },
+        {
+          "name": "Green River, UT",
+          "lat": 38.9955,
+          "lon": -110.1627,
+          "mile": 100,
+          "minutesFromStart": 92.0,
+          "type": "rest",
+          "notes": "I-70 Exit 158 — optional fuel top-off"
+        },
+        {
+          "name": "Price, UT",
+          "lat": 39.5994,
+          "lon": -110.8107,
+          "mile": 157,
+          "minutesFromStart": 154.0,
+          "type": "fuel",
+          "notes": "US-6/US-191 ⛽"
+        },
+        {
+          "name": "Spanish Fork, UT",
+          "lat": 40.1149,
+          "lon": -111.6549,
+          "mile": 232,
+          "minutesFromStart": 227.0,
+          "type": "lunch",
+          "notes": "US-6/I-15 🍽️⛽"
+        },
+        {
+          "name": "Tremonton, UT",
+          "lat": 41.7119,
+          "lon": -112.1657,
+          "mile": 354,
+          "minutesFromStart": 337.0,
+          "type": "fuel",
+          "notes": "I-15/I-84 split ⛽"
+        },
+        {
+          "name": "Burley, ID",
+          "lat": 42.536,
+          "lon": -113.7928,
+          "mile": 420,
+          "minutesFromStart": 439.0,
+          "type": "rest",
+          "notes": "I-84 Exit 208"
+        },
+        {
+          "name": "Twin Falls, ID",
+          "lat": 42.5558,
+          "lon": -114.4701,
+          "mile": 500,
+          "minutesFromStart": 486.0,
+          "type": "destination",
+          "notes": "Shoshone St E"
+        }
+      ]
+    },
+    {
+      "id": "from-ama-day3",
+      "name": "Return 3: Twin Falls → Clarkston",
+      "totalMiles": 421,
+      "totalMinutes": 460.0,
+      "stops": [
+        {
+          "name": "Twin Falls, ID",
+          "lat": 42.5558,
+          "lon": -114.4701,
+          "mile": 0,
+          "minutesFromStart": 0,
+          "type": "start",
+          "notes": "Shoshone St E"
+        },
+        {
+          "name": "Mountain Home, ID",
+          "lat": 43.1326,
+          "lon": -115.6912,
+          "mile": 80,
+          "minutesFromStart": 87.0,
+          "type": "rest",
+          "notes": "I-84 Exit 95"
+        },
+        {
+          "name": "Boise, ID",
+          "lat": 43.615,
+          "lon": -116.2023,
+          "mile": 140,
+          "minutesFromStart": 133.0,
+          "type": "fuel",
+          "notes": "I-184/Chinden Blvd ⛽"
+        },
+        {
+          "name": "Horseshoe Bend, ID",
+          "lat": 43.9126,
+          "lon": -116.1976,
+          "mile": 175,
+          "minutesFromStart": 176.0,
+          "type": "rest",
+          "notes": "ID-55 Payette River Scenic Byway"
+        },
+        {
+          "name": "Cascade, ID",
+          "lat": 44.516,
+          "lon": -116.0419,
+          "mile": 210,
+          "minutesFromStart": 237.0,
+          "type": "rest",
+          "notes": "ID-55 at Cascade Lake"
+        },
+        {
+          "name": "McCall, ID",
+          "lat": 44.9105,
+          "lon": -116.0988,
+          "mile": 250,
+          "minutesFromStart": 270.0,
+          "type": "fuel",
+          "notes": "Deinhard Ln ⛽ — MUST FUEL"
+        },
+        {
+          "name": "Riggins, ID",
+          "lat": 45.4205,
+          "lon": -116.3149,
+          "mile": 310,
+          "minutesFromStart": 331.0,
+          "type": "lunch",
+          "notes": "US-95 Salmon River Canyon 🍽️"
+        },
+        {
+          "name": "Grangeville, ID",
+          "lat": 45.926,
+          "lon": -116.1225,
+          "mile": 360,
+          "minutesFromStart": 379.0,
+          "type": "fuel",
+          "notes": "US-95 ⛽ — last reliable fuel"
+        },
+        {
+          "name": "Clarkston, WA",
+          "lat": 46.3931,
+          "lon": -117.0773,
+          "mile": 421,
+          "minutesFromStart": 460.0,
+          "type": "destination",
+          "notes": "26126 Peola Rd"
+        }
+      ]
+    },
+    {
+      "id": "from-ama-day4",
+      "name": "Return 4: Clarkston → Home",
+      "totalMiles": 325,
+      "totalMinutes": 357.0,
+      "stops": [
+        {
+          "name": "Clarkston, WA",
+          "lat": 46.3931,
+          "lon": -117.0773,
+          "mile": 0,
+          "minutesFromStart": 0,
+          "type": "start",
+          "notes": "26126 Peola Rd"
+        },
+        {
+          "name": "Pomeroy, WA",
+          "lat": 46.474,
+          "lon": -117.6046,
+          "mile": 46,
+          "minutesFromStart": 41.0,
+          "type": "rest",
+          "notes": "US-12 — fuel top-off available"
+        },
+        {
+          "name": "Othello, WA",
+          "lat": 46.8265,
+          "lon": -119.175,
+          "mile": 133,
+          "minutesFromStart": 150.0,
+          "type": "fuel",
+          "notes": "WA-26 ⛽ — first major fuel"
+        },
+        {
+          "name": "Vantage, WA",
+          "lat": 46.9458,
+          "lon": -120.0053,
+          "mile": 174,
+          "minutesFromStart": 199.0,
+          "type": "rest",
+          "notes": "I-90 on-ramp — Columbia River"
+        },
+        {
+          "name": "Ellensburg, WA",
+          "lat": 46.9965,
+          "lon": -120.5478,
+          "mile": 210,
+          "minutesFromStart": 230.0,
+          "type": "lunch",
+          "notes": "I-90 Exit 106 🍽️⛽"
+        },
+        {
+          "name": "Cle Elum, WA",
+          "lat": 47.1954,
+          "lon": -120.9383,
+          "mile": 245,
+          "minutesFromStart": 258.0,
+          "type": "rest",
+          "notes": "I-90 Exit 84 — last before pass"
+        },
+        {
+          "name": "Mountlake Terrace, WA",
+          "lat": 47.7743,
+          "lon": -122.3057,
+          "mile": 325,
+          "minutesFromStart": 357.0,
+          "type": "destination",
+          "notes": "Mountlake Terrace, WA 🏠 HOME!"
+        }
+      ]
+    }
+  ],
+  "name": "Rally From Amarillo 2026"
+}

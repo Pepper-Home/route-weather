@@ -7,7 +7,7 @@ import AlertBanner from './components/AlertBanner.vue'
 import OfflineBanner from './components/OfflineBanner.vue'
 import { useTrips } from './composables/useTrips'
 
-const { trips, selectedTrip, selectedDay, init, selectTrip, selectDay } = useTrips()
+const { trips, selectedTrip, selectedDay, init, selectTrip, selectDay, importTrip, removeTrip } = useTrips()
 const departureMinutes = ref(480) // 8:00 AM default (minutes since midnight)
 
 onMounted(() => init())
@@ -50,6 +50,8 @@ async function clearAndReload() {
         :selectedDay="selectedDay"
         @select-trip="selectTrip"
         @select-day="selectDay"
+        @import-trip="importTrip"
+        @remove-trip="removeTrip"
       />
 
       <DepartureTime v-model="departureMinutes" />
