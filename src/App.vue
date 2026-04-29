@@ -9,34 +9,27 @@ import { useTrips } from './composables/useTrips'
 
 const { trips, selectedTrip, selectedDay, init, selectTrip, selectDay } = useTrips()
 const departureMinutes = ref(480) // 8:00 AM default (minutes since midnight)
-const showClearConfirm = ref(false)
-const clearDone = ref(false)
 
 onMounted(() => init())
 
-async function clearAllCaches() {
-  // Clear localStorage
-  const keysToRemove = []
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i)
-    if (key.startsWith('nws-') || key.startsWith('om-') || key.startsWith('dm-') || key.startsWith('rw-')) {
-      keysToRemove.push(key)
-    }
-  }
-  keysToRemove.forEach(k => localStorage.removeItem(k))
+async function clearAndReload() {
+  // Nuke all localStorage
+  localStorage.clear()
 
-  // Clear service worker caches
+  // Nuke all service worker caches
   if ('caches' in window) {
     const names = await caches.keys()
     await Promise.all(names.map(n => caches.delete(n)))
   }
 
-  showClearConfirm.value = false
-  clearDone.value = true
-  setTimeout(() => { clearDone.value = false }, 2000)
+  // Unregister service worker so it re-fetches everything
+  if ('serviceWorker' in navigator) {
+    const regs = await navigator.serviceWorker.getRegistrations()
+    await Promise.all(regs.map(r => r.unregister()))
+  }
 
-  // Re-init trips and reload weather
-  await init()
+  // Hard reload — like first visit
+  window.location.reload()
 }
 </script>
 
@@ -73,18 +66,13 @@ async function clearAllCaches() {
       />
     </main>
 
-    <footer class="text-center text-xs text-gray-400 dark:text-gray-600 py-4 space-y-2">
+    <footer class="text-center text-xs text-gray-400 dark:text-gray-600 py-4 space-y-3">
       <div>Powered by <a href="https://www.weather.gov" class="underline">NWS API</a> · No tracking · Works offline</div>
-
-      <!-- Clear cache -->
-      <div v-if="clearDone" class="text-green-600 font-semibold">✅ All caches cleared!</div>
-      <div v-else-if="showClearConfirm" class="space-x-2">
-        <span class="text-red-500">Clear all cached data?</span>
-        <button @click="clearAllCaches" class="bg-red-500 text-white text-xs px-2 py-0.5 rounded">Yes, clear</button>
-        <button @click="showClearConfirm = false" class="bg-gray-300 text-gray-700 text-xs px-2 py-0.5 rounded">Cancel</button>
-      </div>
-      <button v-else @click="showClearConfirm = true" class="text-gray-400 hover:text-red-500 text-xs underline transition-colors">
-        🗑️ Clear cache
+      <button
+        @click="clearAndReload"
+        class="bg-red-500 hover:bg-red-600 active:bg-red-700 text-white font-semibold text-sm px-6 py-2.5 rounded-lg shadow-md transition-all"
+      >
+        🗑️ Clear Cache &amp; Reload
       </button>
     </footer>
   </div>
