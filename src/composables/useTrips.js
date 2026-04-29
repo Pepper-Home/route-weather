@@ -64,6 +64,14 @@ export function useTrips() {
       const deletedIds = getDeletedTripIds()
       const allTrips = [...builtIn, ...userTrips].filter(t => !deletedIds.includes(t.id))
 
+      // Apply saved renames to built-in trips
+      try {
+        const renames = JSON.parse(localStorage.getItem('rw-trip-renames')) || {}
+        for (const trip of allTrips) {
+          if (renames[trip.id]) trip.name = renames[trip.id]
+        }
+      } catch { /* ignore */ }
+
       trips.value = allTrips
 
       // Restore last selection
@@ -157,6 +165,33 @@ export function useTrips() {
     }
   }
 
+  function renameTrip(tripId, newName) {
+    if (!newName?.trim()) return
+
+    // Update in user trips localStorage
+    const userTrips = getUserTrips()
+    const userTrip = userTrips.find(t => t.id === tripId)
+    if (userTrip) {
+      userTrip.name = newName.trim()
+      saveUserTrips(userTrips)
+    }
+
+    // Also store rename overrides for built-in trips
+    const RENAME_KEY = 'rw-trip-renames'
+    try {
+      const renames = JSON.parse(localStorage.getItem(RENAME_KEY)) || {}
+      renames[tripId] = newName.trim()
+      localStorage.setItem(RENAME_KEY, JSON.stringify(renames))
+    } catch { /* ignore */ }
+
+    // Update in active list
+    const trip = trips.value.find(t => t.id === tripId)
+    if (trip) {
+      trip.name = newName.trim()
+      trips.value = [...trips.value] // trigger reactivity
+    }
+  }
+
   return {
     trips,
     selectedTrip,
@@ -166,6 +201,7 @@ export function useTrips() {
     selectTrip,
     selectDay,
     importTrip,
-    removeTrip
+    removeTrip,
+    renameTrip
   }
 }

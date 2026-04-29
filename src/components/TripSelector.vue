@@ -2,15 +2,29 @@
 import { ref } from 'vue'
 import TripImporter from './TripImporter.vue'
 
-defineProps({
+const props = defineProps({
   trips: Array,
   selectedTrip: Object,
   selectedDay: Object
 })
-const emit = defineEmits(['select-trip', 'select-day', 'import-trip', 'remove-trip'])
+const emit = defineEmits(['select-trip', 'select-day', 'import-trip', 'remove-trip', 'rename-trip'])
 
 const showImporter = ref(false)
 const showDeleteConfirm = ref(null)
+const editingName = ref(false)
+const editNameValue = ref('')
+
+function startRename() {
+  editNameValue.value = props.selectedTrip?.name || ''
+  editingName.value = true
+}
+
+function saveRename() {
+  if (editNameValue.value.trim()) {
+    emit('rename-trip', props.selectedTrip.id, editNameValue.value.trim())
+  }
+  editingName.value = false
+}
 </script>
 
 <template>
@@ -53,14 +67,35 @@ const showDeleteConfirm = ref(null)
         </div>
       </div>
 
-      <select
-        class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2.5 text-sm shadow-sm focus:ring-2 focus:ring-blue-500"
-        :value="selectedTrip?.id || ''"
-        @change="emit('select-trip', trips.find(t => t.id === $event.target.value))"
-      >
-        <option value="" disabled>Select a trip...</option>
-        <option v-for="trip in trips" :key="trip.id" :value="trip.id">{{ trip.name }}</option>
-      </select>
+      <!-- Rename inline editor -->
+      <div v-if="editingName" class="mb-2 flex gap-2">
+        <input
+          v-model="editNameValue"
+          @keyup.enter="saveRename"
+          @keyup.escape="editingName = false"
+          class="flex-1 rounded-lg border border-blue-400 bg-white dark:bg-gray-900 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500"
+          autofocus
+        />
+        <button @click="saveRename" class="text-xs bg-blue-500 text-white px-3 py-1 rounded">✓</button>
+        <button @click="editingName = false" class="text-xs bg-gray-300 text-gray-700 px-3 py-1 rounded">✕</button>
+      </div>
+
+      <div v-if="!editingName" class="flex gap-1">
+        <select
+          class="flex-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2.5 text-sm shadow-sm focus:ring-2 focus:ring-blue-500"
+          :value="selectedTrip?.id || ''"
+          @change="emit('select-trip', trips.find(t => t.id === $event.target.value))"
+        >
+          <option value="" disabled>Select a trip...</option>
+          <option v-for="trip in trips" :key="trip.id" :value="trip.id">{{ trip.name }}</option>
+        </select>
+        <button
+          v-if="selectedTrip"
+          @click="startRename"
+          class="px-2 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+          title="Rename trip"
+        >✏️</button>
+      </div>
     </div>
 
     <!-- Day picker -->
