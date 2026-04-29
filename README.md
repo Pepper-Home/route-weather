@@ -9,112 +9,71 @@ Mobile-friendly PWA that shows weather forecasts along motorcycle trip routes, t
 ## Architecture
 
 ```
-📱 Browser (Phone or PC — same URL)
+📱 Browser (Phone or PC)
     │
-    ├──→ NWS API (api.weather.gov) ────── Free, no key, US govt GFS model
-    ├──→ Open-Meteo API ───────────────── Free, no key, European ECMWF model
+    ├──→ NWS API (api.weather.gov) ────── Free, US govt GFS model
+    ├──→ Open-Meteo API ───────────────── Free, European ECMWF model
     │
-    │  /api/distance-matrix (ETAs)
+    │  /api/distance-matrix    (Google Distance Matrix — traffic-aware ETAs)
+    │  /api/reverse-geocode    (Google Geocoding — city names from lat/lon)
+    │  /api/user-trips         (CRUD — server-side trip storage)
     ▼
-☁️ Azure Static Web App (Standard tier, $9/mo)
+☁️ Azure Static Web App (Standard, $9/mo)
+    │  "Bring Your Own Functions" linked backend
+    ▼
+⚡ Azure Function App — Flex Consumption (func-route-weather-flex)
     │  System-Assigned Managed Identity
-    │  App Setting: GOOGLE_MAPS_API_KEY → Key Vault reference
+    │  VNet integrated (snet-functions)
+    │  Node.js 22 LTS
     │
-    ├──→ 🔐 Azure Key Vault (RBAC, encrypted at rest)
+    ├──→ 🔐 Azure Key Vault (private endpoint, RBAC)
     │       Secret: GoogleMapsApiKey
-    │       MI role: "Key Vault Secrets User" (read-only)
+    │       MI role: Key Vault Secrets User (read-only)
     │
-    ▼  Resolves secret → calls Google with decrypted key
-🌐 Google Distance Matrix API ─────── Traffic-aware drive times
+    ├──→ 📦 Azure Blob Storage (private endpoint, MI auth)
+    │       Container: user-trips (imported trip JSON files)
+    │       MI role: Storage Blob Data Contributor
+    │
+    └──→ 🌐 Google APIs (Distance Matrix + Geocoding)
+            Via NAT Gateway → static IP 20.115.132.162
+            Google key restricted to this single IP
 ```
 
 ---
 
 ## Azure Resources
 
-| Resource | Name | Resource Group | SKU/Tier | Monthly Cost |
-|----------|------|---------------|----------|-------------|
-| Static Web App | `route-weather-app` | `rg-route-weather` | Standard | $9 |
-| Key Vault | `kv-route-weather` | `rg-route-weather` | Standard (RBAC) | ~$0 |
-| **Total** | | | | **~$9/mo** |
-
-### Subscription
-| Field | Value |
-|-------|-------|
-| Name | Austins Great Subscription |
-| ID | `28b104e8-4125-4d0b-a071-0de96207c6e3` |
-| Tenant | `05005ba0-77d6-412f-b9a0-da39e175a8a0` |
-| Budget | $150/mo |
-| Login | `pepper_home@hotmail.com` |
-
-### Managed Identity (System-Assigned)
-| Field | Value |
-|-------|-------|
-| Type | System-Assigned (tied to `route-weather-app`) |
-| Principal ID | `fc13aefa-debe-45bb-8662-950c6a2e264a` |
-| Key Vault Role | Key Vault Secrets User (read-only) |
-| Scope | `kv-route-weather` only |
-
-### Key Vault
-| Field | Value |
-|-------|-------|
-| Name | `kv-route-weather` |
-| URI | `https://kv-route-weather.vault.azure.net/` |
-| Authorization | RBAC (not access policies) |
-| Secret | `GoogleMapsApiKey` → Google Distance Matrix API key |
-
-### Key Vault RBAC Assignments
-| Principal | Role | Purpose |
-|-----------|------|---------|
-| `pepper_home@hotmail.com` (a41d916a...) | Key Vault Secrets Officer | Admin — create/rotate secrets |
-| `route-weather-app` MI (fc13aefa...) | Key Vault Secrets User | App — read-only access to secrets |
-
-### App Settings
-| Setting | Value | Notes |
-|---------|-------|-------|
-| `GOOGLE_MAPS_API_KEY` | `@Microsoft.KeyVault(SecretUri=https://kv-route-weather.vault.azure.net/secrets/GoogleMapsApiKey/...)` | Resolved at runtime via MI — never plain text |
+| Resource | Name | Purpose | Monthly Cost |
+|----------|------|---------|-------------|
+| Static Web App | route-weather-app | Frontend hosting + SWA→Function link | $9.00 |
+| Function App (Flex) | func-route-weather-flex | API proxy (Google, trips) | ~$0.13 |
+| Key Vault | kv-route-weather | API key storage | ~$0.01 |
+| Storage Account | strouteweather | Function runtime + user trip blobs | ~$0.05 |
+| VNet | vnet-route-weather | Network isolation (10.0.0.0/16) | $0 |
+| NAT Gateway | nat-route-weather | Static outbound IP | $32.40 |
+| Public IP | pip-nat-route-weather | 20.115.132.162 | $3.65 |
+| Private Endpoints | pe-kv-*, pe-sa-* | KV + Storage private access | ~$14.40 |
+| Private DNS Zones | privatelink.vault/blob | DNS resolution for PEs | ~$0.50 |
+| **Total** | | | **~$60/mo** |
 
 ---
 
-## Google Cloud
+## Security
 
-| Field | Value |
-|-------|-------|
-| Account | `aumager@gmail.com` |
-| Project | `route-weather` |
-| API Enabled | Distance Matrix API |
-| API Key Restrictions | HTTP referrer: `green-dune-082bac91e.7.azurestaticapps.net/*` + `localhost:*/*` |
-| API Restrictions | Distance Matrix API only |
-| Free Tier | 10,000 requests/mo (we use ~200) |
-| Console | [console.cloud.google.com](https://console.cloud.google.com) |
-
----
-
-## GitHub
-
-| Field | Value |
-|-------|-------|
-| Account | Pepper-Home |
-| Email | `pepper_home@hotmail.com` |
-| Repo | [Pepper-Home/route-weather](https://github.com/Pepper-Home/route-weather) |
-| CI/CD | GitHub Actions → Azure Static Web App (auto-deploy on push to main) |
-| Git Identity | Per-repo: `Pepper-Home` / `pepper_home@hotmail.com` |
-
----
-
-## Tech Stack
-
-| Component | Choice | Why |
-|-----------|--------|-----|
-| Framework | Vue 3 + Composition API | Lightweight, fast, good mobile UX |
-| Build | Vite | Fast builds, great PWA plugin |
-| PWA | vite-plugin-pwa + Workbox | Service worker, offline cache, installable |
-| CSS | Tailwind CSS | Utility-first, responsive, small bundle |
-| Weather API 1 | NWS api.weather.gov | Free, no key, US govt GFS model |
-| Weather API 2 | Open-Meteo | Free, no key, European ECMWF model |
-| ETA API | Google Distance Matrix | Traffic-aware drive times, key in Key Vault |
-| Hosting | Azure Static Web App | Standard tier, GitHub Actions CI/CD |
-| Secrets | Azure Key Vault + MI | Encrypted, RBAC, access-logged, rotatable |
+| Control | Implementation |
+|---------|---------------|
+| API key storage | Key Vault, accessed via MI only — never in code or app settings |
+| Google API key restriction | Single static IP (NAT Gateway) + API type restriction |
+| Key Vault access | Private endpoint only, public access disabled |
+| Storage access | Private endpoint, shared key disabled, MI auth only |
+| Function App access | SWA identity provider blocks direct calls; only SWA proxy allowed |
+| Network | VNet with dedicated subnets, NAT Gateway for outbound |
+| Input validation | Lat/lon regex, max stops, trip size limit, JSON structure validation |
+| Rate limiting | 30 req/min per endpoint, 10s dedup cache |
+| Error responses | Generic errors only — no secrets or stack traces leaked |
+| CSP | base-uri, form-action, frame-ancestors headers |
+| Resource lock | CanNotDelete on resource group |
+| TLS | 1.2 minimum on storage account |
 
 ---
 
@@ -122,87 +81,78 @@ Mobile-friendly PWA that shows weather forecasts along motorcycle trip routes, t
 
 - **Dual-source forecasts** — NWS (GFS) and Open-Meteo (ECMWF) side-by-side per stop
 - **Confidence scoring** — tuned for motorcycle riders (wind weighted heaviest)
-  - 🟢 75-100%: Sources agree — ride with confidence
-  - 🟡 50-74%: Some disagreement — plan for variability
-  - 🔴 0-49%: Significant disagreement — pack for everything
+- **Google Distance Matrix ETAs** — traffic-aware drive times, not static estimates
 - **NWS active alerts** — severe weather warnings for your route
-- **Stale forecast warning** — red banner if matched forecast is >2 hours from your ETA
-- **Departure time picker** — adjusts all ETAs, debounced to avoid API storms
-- **Offline/PWA** — cached forecasts for dead zones, installable on phone home screen
-- **Multi-trip** — drop new JSON in `/public/trips/` for future rides
-- **Content-Security-Policy** — XSS protection
-- **Dark mode** — readable in any lighting
+- **Stale forecast warning** — red banner if forecast is >2 hours off your ETA
+- **GPX import** — upload HD Ride Planner GPX files, auto-generates stops
+- **Trip JSON import** — upload trip files from the Ride Planning Copilot skill
+- **Server-side trip storage** — imported trips persist in Azure Blob Storage (survive Clear Cache)
+- **Trip management** — rename (✏️), remove (🗑️), import (➕) trips
+- **Google reverse geocoding** — GPX stops get real city/state names
+- **Departure time picker** — adjusts all ETAs, debounced
+- **Clear Cache** — big red button nukes weather/ETA caches, hard reloads (trips survive)
+- **PWA** — installable, offline cached forecasts for dead zones
+- **Dark mode ready** — readable in any lighting
 
 ---
 
 ## Project Structure
 
 ```
-route-weather/
-├── .github/
-│   ├── copilot-instructions.md      # Copilot context for this repo
-│   └── workflows/
-│       └── azure-static-web-apps-*.yml  # CI/CD pipeline
-├── api/
-│   ├── distance-matrix/
-│   │   └── index.js                 # Serverless proxy for Google API (key from KV)
-│   ├── host.json
-│   └── package.json
-├── public/
-│   └── trips/
-│       ├── index.json               # Trip index (auto-discovery)
-│       └── route66-east-2026.json   # Trip waypoints (lat/lon, miles, minutes)
+route-weather/                        ← Frontend (Vue 3 PWA)
 ├── src/
 │   ├── components/
-│   │   ├── AlertBanner.vue          # NWS active alerts
-│   │   ├── DepartureTime.vue        # Departure time picker (default 8:00 AM)
-│   │   ├── OfflineBanner.vue        # "Using cached data" indicator
-│   │   ├── RouteWeather.vue         # Main forecast display + fetch orchestration
-│   │   ├── StopCard.vue             # Dual-source stop card with confidence
-│   │   └── TripSelector.vue         # Trip/day picker
+│   │   ├── AlertBanner.vue           # NWS active alerts
+│   │   ├── DepartureTime.vue         # Departure time picker
+│   │   ├── OfflineBanner.vue         # "Using cached data" indicator
+│   │   ├── RouteWeather.vue          # Main forecast orchestrator
+│   │   ├── StopCard.vue              # Dual-source stop card + confidence
+│   │   ├── TripImporter.vue          # GPX/JSON import UI
+│   │   └── TripSelector.vue          # Trip/day picker + rename/remove
 │   ├── composables/
-│   │   ├── useOffline.js            # Online/offline detection
-│   │   ├── useOpenMeteo.js          # Open-Meteo API + confidence scoring
-│   │   ├── useTrips.js              # Trip config loader
-│   │   └── useWeather.js            # NWS API + caching + rider severity
-│   ├── App.vue
-│   ├── assets/main.css
-│   └── main.js
-├── staticwebapp.config.json         # SPA routing + API proxy config
-├── index.html
-├── vite.config.js                   # Build config + PWA + Tailwind
-├── package.json
-└── .npmrc                           # legacy-peer-deps for CI
+│   │   ├── useDistanceMatrix.js      # Google Distance Matrix client
+│   │   ├── useOffline.js             # Online/offline detection
+│   │   ├── useOpenMeteo.js           # Open-Meteo API + confidence scoring
+│   │   ├── useTrips.js               # Trip CRUD (server-side blob storage)
+│   │   └── useWeather.js             # NWS API + caching + alerts
+│   ├── utils/
+│   │   └── gpxParser.js              # HD Ride Planner GPX → stops
+│   └── App.vue
+├── public/trips/                     # Built-in trip JSON files
+│   ├── index.json
+│   ├── rally-to-milwaukee-2026.json
+│   └── rally-from-amarillo-2026.json
+└── staticwebapp.config.json          # SPA routing + CSP headers
+
+route-weather-func/                   ← Backend (Azure Functions)
+└── src/functions/
+    ├── distanceMatrix.js             # MI → KV → Google Distance Matrix
+    └── userTrips.js                  # MI → Blob Storage CRUD
 ```
 
 ---
 
-## Authentication Cheat Sheet
+## Trip Management
 
-### ⚠️ ALWAYS use a PRIVATE/INCOGNITO browser for device code flows
+### Built-in trips
+Static JSON in `public/trips/`. Deployed with the app. Can be hidden via Remove but restored with Clear Cache.
 
-**Azure CLI:**
-```powershell
-az login --use-device-code
-# Link: https://login.microsoft.com/device
-# Sign in as: pepper_home@hotmail.com
-az account set --subscription "28b104e8-4125-4d0b-a071-0de96207c6e3"
-az account show  # verify: pepper_home@hotmail.com / Austins Great Subscription
-```
+### Imported trips (GPX)
+1. Tap **➕ New Trip** in the app
+2. Pick a `.gpx` file from HD Ride Planner
+3. Name the trip and days
+4. Preview auto-generated stops
+5. Save — stored in Azure Blob Storage
 
-**GitHub CLI:**
-```powershell
-gh auth status  # verify: Pepper-Home is active
-# If device code needed:
-# Link: https://github.com/login/device
-```
+### Imported trips (JSON from Ride Planning Skill)
+1. Tap **➕ New Trip**
+2. Pick the `.json` file the skill generated
+3. Save — stored in Azure Blob Storage
 
-**Google Cloud:**
-```
-# Link: https://console.cloud.google.com
-# Sign in as: aumager@gmail.com
-# Project: route-weather
-```
+### Ride Planning Copilot Skill
+Say: *"Using Ride Planning Skill, create me a plan for this ride"* then paste turn-by-turn directions. The skill researches verified fuel/rest/lunch stops and outputs trip JSON + printable HTML.
+
+Repo: [Pepper-Home/copilot-skills](https://github.com/Pepper-Home/copilot-skills) (private)
 
 ---
 
@@ -210,55 +160,21 @@ gh auth status  # verify: Pepper-Home is active
 
 ### Deploy (automatic)
 ```bash
-git push  # GitHub Actions auto-deploys to Azure
+git push  # GitHub Actions auto-deploys frontend to SWA
 ```
 
-### Rotate Google API Key
+### Deploy Function App
 ```powershell
-# 1. Generate new key in Google Cloud Console
-# 2. Update Key Vault secret:
-az keyvault secret set --vault-name kv-route-weather --name GoogleMapsApiKey --value "NEW_KEY_HERE"
-# 3. Restart the Static Web App to pick up new secret (or wait ~24hrs for auto-refresh)
+cd C:\Pepper_Home_Dev\route-weather-func
+func azure functionapp publish func-route-weather-flex --javascript
 ```
-
-### Add a New Trip
-1. Create a JSON file following the schema in `route66-east-2026.json`
-2. Add it to `/public/trips/`
-3. Add an entry to `/public/trips/index.json`
-4. Push to main
 
 ### Run Locally
 ```powershell
 cd C:\Pepper_Home_Dev\route-weather
-npm install
-npm run dev  # http://localhost:5173
+npm install && npm run dev  # http://localhost:5173
 ```
 
 ---
 
-## Related Files
-
-| File | Location | Purpose |
-|------|----------|---------|
-| Route stop plans (HTML) | `C:\Pepper_Home_Dev\Route 66\Rally-*.html` | Printable fuel/rest/lunch stop plans for each day |
-| Turn-by-turn source data | `C:\Pepper_Home_Dev\Route 66\Turn-by-Turn-Source-Data.md` | Original H-D Ride Planner directions |
-| Session notes | `C:\Pepper_Home_Dev\Route 66\Session-Notes.md` | Full planning session documentation |
-| App plan | `C:\Pepper_Home_Dev\Route 66\Route-Weather-App-Plan.md` | Original app architecture plan |
-| Personal account reference | `C:\Pepper_Home_Dev\Personal-Account-Reference.md` | All personal account details |
-
----
-
-## Security Notes
-
-1. **API key is NEVER in source code** — stored in Azure Key Vault, accessed via Managed Identity
-2. **Key Vault uses RBAC** — not access policies. MI has read-only (Secrets User), you have admin (Secrets Officer)
-3. **Google API key is restricted** — domain referrer + Distance Matrix API only
-4. **CSP header** blocks unauthorized scripts from accessing localStorage (which caches location data)
-5. **Home address removed** — trip JSON uses city-center approximation, not exact address
-6. **Personal email removed** — User-Agent header uses GitHub repo URL, not email
-7. **Forecast safety check** — forecasts >2 hours off target ETA show a red warning banner
-8. **Service worker** caches NWS and Open-Meteo responses (1hr TTL) but NOT trip JSON files
-
----
-
-*Built April 2026 for the Route 66 East HOG Rally motorcycle trip*
+*Built April 2026 for the HOG Rally motorcycle trip — Seattle → Milwaukee → Amarillo → Seattle*
