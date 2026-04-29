@@ -24,30 +24,40 @@ async function handleFile(event) {
 
   try {
     const text = await file.text()
-    const parsed = parseGpx(text)
+    const isJson = file.name.endsWith('.json')
 
-    // Pre-fill trip name from route name if first GPX
-    if (!tripName.value) {
-      tripName.value = parsed.routeName
+    if (isJson) {
+      // Direct trip JSON import (from Ride Planning Skill output)
+      const json = JSON.parse(text)
+      if (!json.name || !json.days?.length) {
+        throw new Error('Invalid trip JSON: must have "name" and "days" array')
+      }
+      tripName.value = json.name
+      for (const day of json.days) {
+        if (!day.stops?.length) continue
+        days.value.push({
+          dayName: day.name || `Day ${days.value.length + 1}`,
+          stops: day.stops,
+          totalMiles: day.totalMiles || 0,
+          fileName: file.name
+        })
+      }
+    } else {
+      // GPX import
+      const parsed = parseGpx(text)
+      if (!tripName.value) tripName.value = parsed.routeName
+      let stops = generateStops(parsed)
+      stops = await enrichStopNames(stops, API_BASE)
+      const startName = stops[0]?.name || 'Start'
+      const endName = stops[stops.length - 1]?.name || 'End'
+      const dayNum = days.value.length + 1
+      days.value.push({
+        dayName: `Day ${dayNum}: ${startName} → ${endName}`,
+        stops,
+        totalMiles: parsed.totalMiles,
+        fileName: file.name
+      })
     }
-
-    // Generate stops
-    let stops = generateStops(parsed)
-
-    // Enrich with Google geocoding (non-blocking — keeps going if it fails)
-    stops = await enrichStopNames(stops, API_BASE)
-
-    // Auto-name the day from start → end
-    const startName = stops[0]?.name || 'Start'
-    const endName = stops[stops.length - 1]?.name || 'End'
-    const dayNum = days.value.length + 1
-
-    days.value.push({
-      dayName: `Day ${dayNum}: ${startName} → ${endName}`,
-      stops,
-      totalMiles: parsed.totalMiles,
-      fileName: file.name
-    })
 
     step.value = 'preview'
   } catch (e) {
@@ -114,17 +124,17 @@ const canSave = computed(() => tripName.value.trim() && days.value.length > 0)
     <!-- Upload GPX -->
     <div class="mb-3">
       <label class="block text-sm font-semibold text-gray-600 dark:text-gray-400 mb-1">
-        Add Day from GPX File
-        <span class="font-normal text-xs text-gray-400">(HD Ride Planner export)</span>
+        Add Day from File
+        <span class="font-normal text-xs text-gray-400">(.gpx from HD Ride Planner or .json from Ride Planning Skill)</span>
       </label>
       <input
         type="file"
-        accept=".gpx"
+        accept=".gpx,.json"
         @change="handleFile"
         :disabled="loading"
         class="text-sm w-full file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-blue-500 file:text-white file:text-xs file:cursor-pointer hover:file:bg-blue-600"
       />
-      <p v-if="loading" class="text-xs text-blue-500 mt-1">⏳ Parsing GPX & geocoding stops...</p>
+      <p v-if="loading" class="text-xs text-blue-500 mt-1">⏳ Parsing & geocoding stops...</p>
       <p v-if="error" class="text-xs text-red-500 mt-1">❌ {{ error }}</p>
     </div>
 
