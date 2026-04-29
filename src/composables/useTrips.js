@@ -1,17 +1,30 @@
 import { ref, shallowRef } from 'vue'
 
 const TRIPS_PATH = '/trips/'
-const USER_TRIPS_KEY = 'rw-user-trips'
+const API_PATH = '/api/user-trips'
 const DELETED_TRIPS_KEY = 'rw-deleted-trips'
 
-function getUserTrips() {
+// Server-side trip storage via Azure Blob Storage
+async function fetchUserTrips() {
   try {
-    return JSON.parse(localStorage.getItem(USER_TRIPS_KEY)) || []
+    const res = await fetch(API_PATH)
+    if (!res.ok) return []
+    const data = await res.json()
+    return data.trips || []
   } catch { return [] }
 }
 
-function saveUserTrips(trips) {
-  localStorage.setItem(USER_TRIPS_KEY, JSON.stringify(trips))
+async function saveUserTripToServer(trip) {
+  const res = await fetch(`${API_PATH}/${encodeURIComponent(trip.id)}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(trip)
+  })
+  if (!res.ok) throw new Error('Failed to save trip to server')
+}
+
+async function deleteUserTripFromServer(tripId) {
+  await fetch(`${API_PATH}/${encodeURIComponent(tripId)}`, { method: 'DELETE' })
 }
 
 function getDeletedTripIds() {
@@ -50,27 +63,22 @@ export function useTrips() {
   async function init() {
     loading.value = true
     try {
-      // Load built-in trips from server
+      // Load built-in trips from static files
       const index = await loadTripIndex()
       const results = await Promise.allSettled(index.map(entry => loadTrip(entry.file)))
       const builtIn = results
         .filter(r => r.status === 'fulfilled')
         .map(r => r.value)
 
-      // Load user-imported trips from localStorage
-      const userTrips = getUserTrips()
+      // Load user trips from server (Azure Blob Storage)
+      const userTrips = await fetchUserTrips()
 
-      // Filter out deleted trips
+      // Filter out deleted built-in trips
       const deletedIds = getDeletedTripIds()
-      const allTrips = [...builtIn, ...userTrips].filter(t => !deletedIds.includes(t.id))
-
-      // Apply saved renames to built-in trips
-      try {
-        const renames = JSON.parse(localStorage.getItem('rw-trip-renames')) || {}
-        for (const trip of allTrips) {
-          if (renames[trip.id]) trip.name = renames[trip.id]
-        }
-      } catch { /* ignore */ }
+      const allTrips = [
+        ...builtIn.filter(t => !deletedIds.includes(t.id)),
+        ...userTrips
+      ]
 
       trips.value = allTrips
 
@@ -105,7 +113,7 @@ export function useTrips() {
     localStorage.setItem('rw-last-day', day.id)
   }
 
-  function importTrip(tripJson) {
+  async function importTrip(tripJson) {
     // Validate structure
     if (!tripJson.id || !tripJson.name || !Array.isArray(tripJson.days)) {
       throw new Error('Invalid trip format: requires id, name, and days array')
@@ -126,10 +134,8 @@ export function useTrips() {
       throw new Error(`Trip with ID "${tripJson.id}" already exists`)
     }
 
-    // Save to user trips
-    const userTrips = getUserTrips()
-    userTrips.push(tripJson)
-    saveUserTrips(userTrips)
+    // Save to server
+    await saveUserTripToServer(tripJson)
 
     // Un-delete if it was previously deleted
     const deletedIds = getDeletedTripIds()
@@ -141,12 +147,11 @@ export function useTrips() {
     return tripJson
   }
 
-  function removeTrip(tripId) {
-    // Remove from user trips if it's user-imported
-    const userTrips = getUserTrips()
-    saveUserTrips(userTrips.filter(t => t.id !== tripId))
+  async function removeTrip(tripId) {
+    // Try to delete from server (works for user trips, no-op for built-in)
+    await deleteUserTripFromServer(tripId)
 
-    // Add to deleted list (handles built-in trips too)
+    // Add to deleted list (handles built-in trips that can't be deleted from server)
     const deletedIds = getDeletedTripIds()
     if (!deletedIds.includes(tripId)) {
       deletedIds.push(tripId)
@@ -165,30 +170,17 @@ export function useTrips() {
     }
   }
 
-  function renameTrip(tripId, newName) {
+  async function renameTrip(tripId, newName) {
     if (!newName?.trim()) return
-
-    // Update in user trips localStorage
-    const userTrips = getUserTrips()
-    const userTrip = userTrips.find(t => t.id === tripId)
-    if (userTrip) {
-      userTrip.name = newName.trim()
-      saveUserTrips(userTrips)
-    }
-
-    // Also store rename overrides for built-in trips
-    const RENAME_KEY = 'rw-trip-renames'
-    try {
-      const renames = JSON.parse(localStorage.getItem(RENAME_KEY)) || {}
-      renames[tripId] = newName.trim()
-      localStorage.setItem(RENAME_KEY, JSON.stringify(renames))
-    } catch { /* ignore */ }
 
     // Update in active list
     const trip = trips.value.find(t => t.id === tripId)
     if (trip) {
       trip.name = newName.trim()
       trips.value = [...trips.value] // trigger reactivity
+
+      // If it's a server-side trip, save the updated version
+      await saveUserTripToServer(trip).catch(() => {})
     }
   }
 
