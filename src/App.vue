@@ -28,6 +28,10 @@ async function clearAndReload() {
   // Hard reload — like first visit
   window.location.reload()
 }
+
+function openGuides() {
+  window.open('/guides.html', '_blank', 'noopener,noreferrer')
+}
 </script>
 
 <template>
@@ -76,8 +80,8 @@ async function clearAndReload() {
       </button>
       <br>
       <button
-        @click="window.open('/guides.html', '_blank')"
-        class="bg-[#16213e] hover:bg-[#1a1a2e] text-white font-semibold text-sm px-6 py-2.5 rounded-lg shadow-md transition-all"
+        @click="openGuides"
+        class="bg-[#16213e] hover:bg-[#0f172a] active:bg-[#0a0f1a] text-white font-semibold text-sm px-6 py-2.5 rounded-lg shadow-md transition-all cursor-pointer hover:shadow-lg active:scale-95"
       >
         📋 Ride Guides
       </button>
