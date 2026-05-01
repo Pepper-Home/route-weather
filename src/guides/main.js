@@ -1,5 +1,5 @@
 import { createApp } from 'vue'
 import GuidesApp from './GuidesApp.vue'
-import 'tailwindcss'
+import '../assets/main.css'
 
 createApp(GuidesApp).mount('#guides-app')
