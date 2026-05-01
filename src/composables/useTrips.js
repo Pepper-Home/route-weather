@@ -32,7 +32,8 @@ async function deleteUserTripFromServer(tripId) {
 function handleAuthError(err) {
   if (err?.message === 'AUTH_REQUIRED') {
     if (confirm('Sign in with GitHub to manage trips?')) {
-      window.location.href = LOGIN_PATH
+      // Use setTimeout to ensure navigation happens outside the async/catch context
+      setTimeout(() => { window.location.href = LOGIN_PATH }, 0)
     }
     return true
   }
