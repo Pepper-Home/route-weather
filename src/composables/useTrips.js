@@ -1,28 +1,16 @@
 import { ref, shallowRef } from 'vue'
 
 const API_PATH = '/api/user-trips'
-const AUTH_ME_PATH = '/.auth/me'
 const LOGIN_PATH = '/.auth/login/github'
-
-// Check if user is authenticated via SWA
-async function checkAuth() {
-  try {
-    const res = await fetch(AUTH_ME_PATH)
-    if (!res.ok) return null
-    const data = await res.json()
-    return data?.clientPrincipal || null
-  } catch { return null }
-}
 
 // Server-side trip storage via Azure Blob Storage
 async function fetchUserTrips() {
   try {
     const res = await fetch(API_PATH)
-    if (res.status === 401) return { trips: [], authRequired: true }
-    if (!res.ok) return { trips: [], authRequired: false }
+    if (!res.ok) return []
     const data = await res.json()
-    return { trips: data.trips || [], authRequired: false }
-  } catch { return { trips: [], authRequired: false } }
+    return data.trips || []
+  } catch { return [] }
 }
 
 async function saveUserTripToServer(trip) {
@@ -31,12 +19,24 @@ async function saveUserTripToServer(trip) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(trip)
   })
+  if (res.status === 401 || res.status === 403) throw new Error('AUTH_REQUIRED')
   if (!res.ok) throw new Error('Failed to save trip to server')
 }
 
 async function deleteUserTripFromServer(tripId) {
   const res = await fetch(`${API_PATH}/${encodeURIComponent(tripId)}`, { method: 'DELETE' })
+  if (res.status === 401 || res.status === 403) throw new Error('AUTH_REQUIRED')
   if (!res.ok && res.status !== 404) throw new Error(`Delete failed: ${res.status}`)
+}
+
+function handleAuthError(err) {
+  if (err?.message === 'AUTH_REQUIRED') {
+    if (confirm('Sign in with GitHub to manage trips?')) {
+      window.location.href = LOGIN_PATH
+    }
+    return true
+  }
+  return false
 }
 
 export function useTrips() {
@@ -44,18 +44,11 @@ export function useTrips() {
   const selectedTrip = shallowRef(null)
   const selectedDay = shallowRef(null)
   const loading = ref(false)
-  const authRequired = ref(false)
-  const user = ref(null)
 
   async function init() {
     loading.value = true
     try {
-      user.value = await checkAuth()
-
-      // v2: single source of truth — Azure Blob Storage only
-      const serverResult = await fetchUserTrips()
-      authRequired.value = serverResult.authRequired
-      trips.value = serverResult.trips
+      trips.value = await fetchUserTrips()
     } finally {
       loading.value = false
     }
@@ -71,7 +64,6 @@ export function useTrips() {
   }
 
   async function importTrip(tripJson) {
-    // Validate structure
     if (!tripJson.id || !tripJson.name || !Array.isArray(tripJson.days)) {
       throw new Error('Invalid trip format: requires id, name, and days array')
     }
@@ -90,13 +82,23 @@ export function useTrips() {
       throw new Error(`Trip with ID "${tripJson.id}" already exists`)
     }
 
-    await saveUserTripToServer(tripJson)
+    try {
+      await saveUserTripToServer(tripJson)
+    } catch (err) {
+      if (handleAuthError(err)) return
+      throw err
+    }
     trips.value = [...trips.value, tripJson]
     return tripJson
   }
 
   async function removeTrip(tripId) {
-    await deleteUserTripFromServer(tripId)
+    try {
+      await deleteUserTripFromServer(tripId)
+    } catch (err) {
+      if (!handleAuthError(err)) alert('Failed to remove trip')
+      return
+    }
 
     trips.value = trips.value.filter(t => t.id !== tripId)
 
@@ -110,15 +112,19 @@ export function useTrips() {
     if (!newName?.trim()) return
 
     const trip = trips.value.find(t => t.id === tripId)
-    if (trip) {
-      trip.name = newName.trim()
-      trips.value = [...trips.value]
-      await saveUserTripToServer(trip).catch(() => {})
-    }
-  }
+    if (!trip) return
 
-  function login() {
-    window.location.href = LOGIN_PATH
+    const oldName = trip.name
+    trip.name = newName.trim()
+    trips.value = [...trips.value]
+
+    try {
+      await saveUserTripToServer(trip)
+    } catch (err) {
+      if (handleAuthError(err)) return
+      trip.name = oldName
+      trips.value = [...trips.value]
+    }
   }
 
   return {
@@ -126,14 +132,11 @@ export function useTrips() {
     selectedTrip,
     selectedDay,
     loading,
-    authRequired,
-    user,
     init,
     selectTrip,
     selectDay,
     importTrip,
     removeTrip,
-    renameTrip,
-    login
+    renameTrip
   }
 }
