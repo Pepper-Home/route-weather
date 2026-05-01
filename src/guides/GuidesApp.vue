@@ -1,15 +1,12 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 
 const API_PATH = '/api/user-trips'
 const GUIDE_API = '/api/ride-guides'
 
 const trips = ref([])
 const selectedTrip = ref(null)
-const selectedDay = ref(null)
-const guideHtml = ref(null)
 const loading = ref(false)
-const guideLoading = ref(false)
 const error = ref(null)
 const availableGuides = ref([])
 
@@ -31,46 +28,22 @@ async function loadTrips() {
 async function onTripSelected(tripId) {
   const trip = trips.value.find(t => t.id === tripId)
   selectedTrip.value = trip || null
-  selectedDay.value = null
-  guideHtml.value = null
   availableGuides.value = []
+  error.value = null
 
   if (!trip) return
 
-  // Check which guides exist for this trip
   try {
     const res = await fetch(`${GUIDE_API}/${encodeURIComponent(trip.id)}`)
     if (res.ok) {
       const data = await res.json()
       availableGuides.value = data.guides || []
     }
-  } catch { /* ignore — just means no guides badge */ }
+  } catch { /* ignore */ }
 }
 
-async function onDaySelected(dayId) {
-  const day = selectedTrip.value?.days.find(d => d.id === dayId)
-  selectedDay.value = day || null
-  guideHtml.value = null
-  error.value = null
-
-  if (!day || !selectedTrip.value) return
-
-  guideLoading.value = true
-  try {
-    const res = await fetch(`${GUIDE_API}/${encodeURIComponent(selectedTrip.value.id)}/${encodeURIComponent(day.id)}`)
-    if (res.status === 404) {
-      guideHtml.value = null
-      error.value = 'No ride guide available for this day yet.'
-      return
-    }
-    if (!res.ok) throw new Error('Failed to load guide')
-    const data = await res.json()
-    guideHtml.value = data.html
-  } catch (e) {
-    error.value = e.message
-  } finally {
-    guideLoading.value = false
-  }
+function openGuide(dayId) {
+  window.location.href = `${GUIDE_API}/${encodeURIComponent(selectedTrip.value.id)}/${encodeURIComponent(dayId)}`
 }
 
 loadTrips()
@@ -84,7 +57,7 @@ loadTrips()
       <p class="text-xs opacity-75">Stop plans for your motorcycle trips</p>
     </header>
 
-    <main class="flex-1 px-4 py-4 max-w-4xl mx-auto w-full space-y-4">
+    <main class="flex-1 px-4 py-4 max-w-lg mx-auto w-full space-y-4">
       <!-- Loading -->
       <div v-if="loading" class="text-center py-8 text-gray-500">Loading trips...</div>
 
@@ -108,15 +81,15 @@ loadTrips()
           <button
             v-for="day in selectedTrip.days"
             :key="day.id"
-            @click="onDaySelected(day.id)"
+            @click="availableGuides.includes(day.id) && openGuide(day.id)"
             class="text-left px-3 py-2.5 rounded-lg border text-sm transition-all"
-            :class="selectedDay?.id === day.id
-              ? 'border-blue-500 bg-blue-50 text-blue-700 ring-2 ring-blue-500'
-              : 'border-gray-200 bg-white hover:border-blue-300'"
+            :class="availableGuides.includes(day.id)
+              ? 'border-gray-200 bg-white hover:border-blue-400 hover:bg-blue-50 cursor-pointer'
+              : 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed'"
           >
             <div class="flex items-center justify-between">
               <div class="font-semibold">{{ day.name }}</div>
-              <span v-if="availableGuides.includes(day.id)" class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">📋 Guide</span>
+              <span v-if="availableGuides.includes(day.id)" class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">📋 View Guide</span>
               <span v-else class="text-xs bg-gray-100 text-gray-400 px-2 py-0.5 rounded-full">No guide</span>
             </div>
             <div class="text-xs text-gray-500">{{ day.totalMiles }} mi · {{ Math.floor(day.totalMinutes / 60) }}h {{ day.totalMinutes % 60 }}m · {{ day.stops.length }} stops</div>
@@ -125,22 +98,8 @@ loadTrips()
       </div>
 
       <!-- Error -->
-      <div v-if="error && !guideLoading" class="p-3 bg-amber-50 rounded-lg border border-amber-200 text-sm text-amber-700">
+      <div v-if="error" class="p-3 bg-amber-50 rounded-lg border border-amber-200 text-sm text-amber-700">
         {{ error }}
-      </div>
-
-      <!-- Guide loading -->
-      <div v-if="guideLoading" class="text-center py-8 text-gray-500">Loading ride guide...</div>
-
-      <!-- Guide content in sandboxed iframe -->
-      <div v-if="guideHtml && !guideLoading" class="rounded-lg overflow-hidden shadow-lg border border-gray-200">
-        <iframe
-          :srcdoc="guideHtml"
-          sandbox="allow-popups"
-          class="w-full border-0"
-          style="min-height: 80vh;"
-          @load="$event.target.style.height = $event.target.contentDocument?.documentElement?.scrollHeight + 'px'"
-        ></iframe>
       </div>
     </main>
 
