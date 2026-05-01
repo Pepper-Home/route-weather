@@ -1,12 +1,12 @@
 {
   "trips": [
     {
-      "name": "Rally To Milwaukee 2026",
-      "file": "rally-to-milwaukee-2026.json"
+      "name": "Rally To MKE 2026",
+      "file": "rally-to-mke-2026.json"
     },
     {
-      "name": "Rally From Amarillo 2026",
-      "file": "rally-from-amarillo-2026.json"
+      "name": "Route 66 East Rally 2026",
+      "file": "route-66-east-2026.json"
     }
   ]
 }

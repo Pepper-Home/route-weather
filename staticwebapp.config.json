@@ -1,7 +1,13 @@
 {
   "routes": [
     {
-      "route": "/api/user-trips*",
+      "route": "/api/user-trips",
+      "methods": ["GET"],
+      "allowedRoles": ["anonymous", "authenticated"]
+    },
+    {
+      "route": "/api/user-trips/*",
+      "methods": ["PUT", "DELETE"],
       "allowedRoles": ["owner"]
     }
   ],

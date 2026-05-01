@@ -37,7 +37,8 @@ async function saveUserTripToServer(trip) {
 }
 
 async function deleteUserTripFromServer(tripId) {
-  await fetch(`${API_PATH}/${encodeURIComponent(tripId)}`, { method: 'DELETE' })
+  const res = await fetch(`${API_PATH}/${encodeURIComponent(tripId)}`, { method: 'DELETE' })
+  if (!res.ok && res.status !== 404) throw new Error(`Delete failed: ${res.status}`)
 }
 
 function getDeletedTripIds() {
@@ -168,8 +169,10 @@ export function useTrips() {
   }
 
   async function removeTrip(tripId) {
-    // Try to delete from server (works for user trips, no-op for built-in)
-    await deleteUserTripFromServer(tripId)
+    // Try to delete from server (may fail for built-in trips or if not authenticated — that's OK)
+    try {
+      await deleteUserTripFromServer(tripId)
+    } catch { /* ignore — built-in trips aren't on server */ }
 
     // Add to deleted list (handles built-in trips that can't be deleted from server)
     const deletedIds = getDeletedTripIds()
