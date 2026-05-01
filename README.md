@@ -115,42 +115,45 @@ route-weather/                        ← Frontend (Vue 3 PWA)
 │   │   ├── useOpenMeteo.js           # Open-Meteo API + confidence scoring
 │   │   ├── useTrips.js               # Trip CRUD (server-side blob storage)
 │   │   └── useWeather.js             # NWS API + caching + alerts
+│   ├── guides/
+│   │   ├── GuidesApp.vue             # Ride Guides viewer (trip/day selector)
+│   │   └── main.js                   # Guides entry point
 │   ├── utils/
 │   │   └── gpxParser.js              # HD Ride Planner GPX → stops
 │   └── App.vue
-├── public/trips/                     # Built-in trip JSON files
-│   ├── index.json
-│   ├── rally-to-milwaukee-2026.json
-│   └── rally-from-amarillo-2026.json
+├── guides.html                       # Second Vite entry — Ride Guides page
 └── staticwebapp.config.json          # SPA routing + CSP headers
 
 route-weather-func/                   ← Backend (Azure Functions)
 └── src/functions/
     ├── distanceMatrix.js             # MI → KV → Google Distance Matrix
-    └── userTrips.js                  # MI → Blob Storage CRUD
+    ├── rideGuides.js                 # MI → Blob Storage ride guide HTML
+    └── userTrips.js                  # MI → Blob Storage trip CRUD
 ```
 
 ---
 
 ## Trip Management
 
-### Built-in trips
-Static JSON in `public/trips/`. Deployed with the app. Can be hidden via Remove but restored with Clear Cache.
+All trips are stored server-side in Azure Blob Storage. No local/built-in trips.
 
-### Imported trips (GPX)
+### Import trips (GPX)
 1. Tap **➕ New Trip** in the app
 2. Pick a `.gpx` file from HD Ride Planner
 3. Name the trip and days
 4. Preview auto-generated stops
 5. Save — stored in Azure Blob Storage
 
-### Imported trips (JSON from Ride Planning Skill)
+### Import trips (JSON from Ride Planning Skill)
 1. Tap **➕ New Trip**
 2. Pick the `.json` file the skill generated
 3. Save — stored in Azure Blob Storage
 
+### Ride Guides
+HTML stop plans viewable in the app via **📋 Ride Guides** button. Stored in `ride-guides` blob container, keyed by `{tripId}/{dayId}.html`.
+
 ### Ride Planning Copilot Skill
-Say: *"Using Ride Planning Skill, create me a plan for this ride"* then paste turn-by-turn directions. The skill researches verified fuel/rest/lunch stops and outputs trip JSON + printable HTML.
+Say: *"Using Ride Planning Skill, create me a plan for this ride"* then paste turn-by-turn directions. The skill researches verified fuel/rest/lunch stops and outputs trip JSON + HTML ride guide, then uploads both to the app.
 
 Repo: [Pepper-Home/copilot-skills](https://github.com/Pepper-Home/copilot-skills) (private)
 
