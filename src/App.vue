@@ -74,6 +74,13 @@ async function clearAndReload() {
       >
         🗑️ Clear Cache &amp; Reload
       </button>
+      <br>
+      <button
+        @click="window.open('/guides.html', '_blank')"
+        class="bg-[#16213e] hover:bg-[#1a1a2e] text-white font-semibold text-sm px-6 py-2.5 rounded-lg shadow-md transition-all"
+      >
+        📋 Ride Guides
+      </button>
     </footer>
   </div>
 </template>
