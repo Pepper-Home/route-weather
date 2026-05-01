@@ -1,0 +1,405 @@
+{
+  "id": "route-66-east-2026",
+  "name": "Route 66 East Rally 2026",
+  "days": [
+    {
+      "id": "route-66-east-2026-day2",
+      "name": "Day 2: Milwaukee → Joliet",
+      "totalMiles": 126,
+      "totalMinutes": 161,
+      "stops": [
+        {
+          "name": "House of Harley-Davidson, Greenfield, WI",
+          "lat": 42.9530,
+          "lon": -87.9960,
+          "mile": 0,
+          "minutesFromStart": 0,
+          "type": "start",
+          "notes": "6221 W Layton Ave. Rally start."
+        },
+        {
+          "name": "Navy Pier, Chicago, IL",
+          "lat": 41.8917,
+          "lon": -87.6086,
+          "mile": 85,
+          "minutesFromStart": 88,
+          "type": "rest",
+          "notes": "600 E Grand Ave. Iconic lakefront landmark."
+        },
+        {
+          "name": "Route 66 Begin Sign, Chicago",
+          "lat": 41.8795,
+          "lon": -87.6241,
+          "mile": 86,
+          "minutesFromStart": 95,
+          "type": "rest",
+          "notes": "Adams St & Michigan Ave. THE starting point of the Mother Road."
+        },
+        {
+          "name": "Illinois Harley-Davidson, Countryside",
+          "lat": 41.7850,
+          "lon": -87.8680,
+          "mile": 105,
+          "minutesFromStart": 125,
+          "type": "rest",
+          "notes": "9950 Joliet Rd. On route! Sun 12pm-6pm."
+        },
+        {
+          "name": "Rich & Creamy, Joliet",
+          "lat": 41.5350,
+          "lon": -88.0830,
+          "mile": 121,
+          "minutesFromStart": 150,
+          "type": "rest",
+          "notes": "920 N Broadway. Blues Brothers statues on roof. Rt 66 ice cream."
+        },
+        {
+          "name": "Joliet, IL",
+          "lat": 41.5253,
+          "lon": -88.0817,
+          "mile": 126,
+          "minutesFromStart": 161,
+          "type": "destination",
+          "notes": "257 E Jackson St. Near Rt 66 Welcome Center & Old Joliet Prison."
+        }
+      ]
+    },
+    {
+      "id": "route-66-east-2026-day3",
+      "name": "Day 3: Joliet → Springfield IL",
+      "totalMiles": 159,
+      "totalMinutes": 262,
+      "stops": [
+        {
+          "name": "Joliet, IL",
+          "lat": 41.5280,
+          "lon": -88.0840,
+          "mile": 0,
+          "minutesFromStart": 0,
+          "type": "start",
+          "notes": "750 N Broadway St."
+        },
+        {
+          "name": "Gemini Giant, Wilmington",
+          "lat": 41.3070,
+          "lon": -88.1470,
+          "mile": 18,
+          "minutesFromStart": 23,
+          "type": "rest",
+          "notes": "South Island Park. 28-ft Muffler Man."
+        },
+        {
+          "name": "Polk-A-Dot Drive In, Braidwood",
+          "lat": 41.2650,
+          "lon": -88.2120,
+          "mile": 22,
+          "minutesFromStart": 29,
+          "type": "rest",
+          "notes": "222 N Front St. Retro drive-in, Elvis & Marilyn statues."
+        },
+        {
+          "name": "The Shop on Rt 66, Gardner",
+          "lat": 41.1880,
+          "lon": -88.3100,
+          "mile": 30,
+          "minutesFromStart": 39,
+          "type": "rest",
+          "notes": "315 N Center St. Rt 66 gift shop."
+        },
+        {
+          "name": "Route 66 Museum, Pontiac",
+          "lat": 40.8810,
+          "lon": -88.6290,
+          "mile": 60,
+          "minutesFromStart": 70,
+          "type": "fuel",
+          "notes": "110 W Howard St. FREE. Wally's fuel (1 Holiday Rd, 24hr)."
+        },
+        {
+          "name": "Springfield, IL",
+          "lat": 39.7990,
+          "lon": -89.6440,
+          "mile": 159,
+          "minutesFromStart": 262,
+          "type": "destination",
+          "notes": "N 9th St. Cozy Dog Drive In! Free evening for Lincoln sites."
+        }
+      ]
+    },
+    {
+      "id": "route-66-east-2026-day4",
+      "name": "Day 4: Springfield IL → St. Louis",
+      "totalMiles": 121,
+      "totalMinutes": 159,
+      "stops": [
+        {
+          "name": "Springfield, IL",
+          "lat": 39.7990,
+          "lon": -89.6440,
+          "mile": 0,
+          "minutesFromStart": 0,
+          "type": "start",
+          "notes": "Cozy Dog breakfast before departure!"
+        },
+        {
+          "name": "Litchfield Museum, Litchfield IL",
+          "lat": 39.1750,
+          "lon": -89.6540,
+          "mile": 52,
+          "minutesFromStart": 64,
+          "type": "fuel",
+          "notes": "334 N Old Route 66. FREE. Phillips 66 fuel at 517 E Union Ave."
+        },
+        {
+          "name": "McKinley Bridge, Venice IL",
+          "lat": 38.6570,
+          "lon": -90.1700,
+          "mile": 104,
+          "minutesFromStart": 138,
+          "type": "rest",
+          "notes": "Historic Rt 66 Mississippi crossing into St. Louis!"
+        },
+        {
+          "name": "St. Louis Harley-Davidson",
+          "lat": 38.5350,
+          "lon": -90.2930,
+          "mile": 121,
+          "minutesFromStart": 159,
+          "type": "destination",
+          "notes": "3600 Lemay Ferry Rd. Rally evening event!"
+        }
+      ]
+    },
+    {
+      "id": "route-66-east-2026-day5",
+      "name": "Day 5: St. Louis → Springfield MO",
+      "totalMiles": 226,
+      "totalMinutes": 343,
+      "stops": [
+        {
+          "name": "St. Louis Harley-Davidson",
+          "lat": 38.5350,
+          "lon": -90.2930,
+          "mile": 0,
+          "minutesFromStart": 0,
+          "type": "start",
+          "notes": "3600 Lemay Ferry Rd."
+        },
+        {
+          "name": "Rt 66 State Park, Eureka MO",
+          "lat": 38.5010,
+          "lon": -90.5630,
+          "mile": 18,
+          "minutesFromStart": 18,
+          "type": "rest",
+          "notes": "4 Outer Rd W. Visitor center 9am-4:30pm."
+        },
+        {
+          "name": "Wagon Wheel Motel, Cuba MO",
+          "lat": 38.0630,
+          "lon": -91.4030,
+          "mile": 80,
+          "minutesFromStart": 131,
+          "type": "fuel",
+          "notes": "901 E Washington Blvd. Oldest motel on Rt 66. TA Cuba fuel (24hr)."
+        },
+        {
+          "name": "Devils Elbow Bridge, MO",
+          "lat": 37.8190,
+          "lon": -92.0080,
+          "mile": 127,
+          "minutesFromStart": 208,
+          "type": "rest",
+          "notes": "21050 Teardrop Rd. 1923 bridge, National Register."
+        },
+        {
+          "name": "Uranus Fudge Factory, St Robert MO",
+          "lat": 37.8130,
+          "lon": -92.0380,
+          "mile": 130,
+          "minutesFromStart": 216,
+          "type": "rest",
+          "notes": "14428 MO-Z. Gloriously weird. 8am-9pm."
+        },
+        {
+          "name": "Eagle Stop, Lebanon MO",
+          "lat": 37.6810,
+          "lon": -92.6640,
+          "mile": 160,
+          "minutesFromStart": 250,
+          "type": "fuel",
+          "notes": "1459 S Jefferson Ave. 24hr."
+        },
+        {
+          "name": "Birthplace of Rt 66 Park, Springfield MO",
+          "lat": 37.2080,
+          "lon": -93.3100,
+          "mile": 222,
+          "minutesFromStart": 332,
+          "type": "rest",
+          "notes": "1200 W College St. Where 'Route 66' was named in 1926."
+        },
+        {
+          "name": "Renegade Harley-Davidson, Springfield MO",
+          "lat": 37.1770,
+          "lon": -93.3390,
+          "mile": 226,
+          "minutesFromStart": 343,
+          "type": "destination",
+          "notes": "3980 W Sunshine St. Rally evening party!"
+        }
+      ]
+    },
+    {
+      "id": "route-66-east-2026-day6",
+      "name": "Day 6: Springfield MO → Tulsa",
+      "totalMiles": 197,
+      "totalMinutes": 231,
+      "stops": [
+        {
+          "name": "Renegade HD, Springfield MO",
+          "lat": 37.1770,
+          "lon": -93.3390,
+          "mile": 0,
+          "minutesFromStart": 0,
+          "type": "start",
+          "notes": "3980 W Sunshine St."
+        },
+        {
+          "name": "Gary's Gay Parita, Ash Grove MO",
+          "lat": 37.3130,
+          "lon": -93.5760,
+          "mile": 21,
+          "minutesFromStart": 27,
+          "type": "rest",
+          "notes": "21118 Historic Route 66. Restored Rt 66 station. 8am-7pm."
+        },
+        {
+          "name": "Carthage Historic Square, MO",
+          "lat": 37.1760,
+          "lon": -94.3100,
+          "mile": 58,
+          "minutesFromStart": 67,
+          "type": "rest",
+          "notes": "119 E 3rd St. 1894 courthouse. Iggy's Diner for lunch."
+        },
+        {
+          "name": "Joplin 44 Petro, MO",
+          "lat": 37.0510,
+          "lon": -94.4780,
+          "mile": 80,
+          "minutesFromStart": 90,
+          "type": "fuel",
+          "notes": "4240 Highway 43. I-44 Exit 4. 24hr."
+        },
+        {
+          "name": "Rainbow Bridge, Baxter Springs KS",
+          "lat": 37.0280,
+          "lon": -94.7350,
+          "mile": 88,
+          "minutesFromStart": 105,
+          "type": "rest",
+          "notes": "Old US-66. Only surviving Marsh Arch on Rt 66. Freshly restored 2025."
+        },
+        {
+          "name": "Vinita Breezeway, OK",
+          "lat": 36.6390,
+          "lon": -95.1540,
+          "mile": 138,
+          "minutesFromStart": 164,
+          "type": "rest",
+          "notes": "111 N Wilson St. Rt 66 covered breezeway."
+        },
+        {
+          "name": "Blue Whale, Catoosa OK",
+          "lat": 36.1890,
+          "lon": -95.7580,
+          "mile": 186,
+          "minutesFromStart": 213,
+          "type": "rest",
+          "notes": "2600 N Hwy 66. CLOSED — under construction until May 30, 2026. Photo from highway only."
+        },
+        {
+          "name": "Route 66 Harley-Davidson, Tulsa OK",
+          "lat": 36.1210,
+          "lon": -95.8940,
+          "mile": 197,
+          "minutesFromStart": 231,
+          "type": "destination",
+          "notes": "3637 S Memorial Dr. A dealer literally named Route 66 HD!"
+        }
+      ]
+    },
+    {
+      "id": "route-66-east-2026-day7",
+      "name": "Day 7: Tulsa → Amarillo",
+      "totalMiles": 387,
+      "totalMinutes": 488,
+      "stops": [
+        {
+          "name": "Route 66 HD, Tulsa OK",
+          "lat": 36.1210,
+          "lon": -95.8940,
+          "mile": 0,
+          "minutesFromStart": 0,
+          "type": "start",
+          "notes": "3637 S Memorial Dr. START EARLY!"
+        },
+        {
+          "name": "Chandler, OK (McJerry Gallery + Fuel)",
+          "lat": 35.7020,
+          "lon": -96.8810,
+          "mile": 72,
+          "minutesFromStart": 81,
+          "type": "fuel",
+          "notes": "OnCue, 501 E 1st St (24hr). McJerry Gallery at 306 Manvel Ave — call (405) 240-7659."
+        },
+        {
+          "name": "Iron Nation HD, Edmond OK",
+          "lat": 35.6330,
+          "lon": -97.4780,
+          "mile": 110,
+          "minutesFromStart": 130,
+          "type": "fuel",
+          "notes": "3433 S Broadway. Fri 9am-6pm. Phillips 66 nearby."
+        },
+        {
+          "name": "Sid's Diner, El Reno OK",
+          "lat": 35.5320,
+          "lon": -97.9570,
+          "mile": 140,
+          "minutesFromStart": 170,
+          "type": "lunch",
+          "notes": "300 S Choctaw Ave. Legendary fried onion burgers! Fri 7am-8pm."
+        },
+        {
+          "name": "Rt 66 Museum, Clinton OK",
+          "lat": 35.5080,
+          "lon": -98.9730,
+          "mile": 205,
+          "minutesFromStart": 275,
+          "type": "fuel",
+          "notes": "2229 W Gary Blvd. Fri 9am-5pm, $7. MUST STOP per rally. Phillips 66 Neptune (24hr) nearby."
+        },
+        {
+          "name": "CEFCO Shamrock, TX",
+          "lat": 35.2190,
+          "lon": -100.2480,
+          "mile": 280,
+          "minutesFromStart": 360,
+          "type": "fuel",
+          "notes": "1249 N Main St. 24hr. MANDATORY — Clinton to Amarillo is 182 mi without this."
+        },
+        {
+          "name": "Tripp's Harley-Davidson, Amarillo TX",
+          "lat": 35.1940,
+          "lon": -101.8780,
+          "mile": 387,
+          "minutesFromStart": 488,
+          "type": "destination",
+          "notes": "6040 W Interstate 40. ROUTE 66 EAST RALLY COMPLETE! 🏁"
+        }
+      ]
+    }
+  ]
+}

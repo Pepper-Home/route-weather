@@ -1,0 +1,397 @@
+{
+  "id": "rally-to-mke-2026",
+  "name": "Rally To MKE 2026",
+  "days": [
+    {
+      "id": "rally-to-mke-2026-day1",
+      "name": "Day 1: Mountlake Terrace → Missoula",
+      "totalMiles": 494,
+      "totalMinutes": 429,
+      "stops": [
+        {
+          "name": "Mountlake Terrace, WA",
+          "lat": 47.7974,
+          "lon": -122.3151,
+          "mile": 0,
+          "minutesFromStart": 0,
+          "type": "start",
+          "notes": "22705 60th Ave W. Full tank at departure."
+        },
+        {
+          "name": "Indian John Hill Rest Area",
+          "lat": 47.1465,
+          "lon": -120.7683,
+          "mile": 100,
+          "minutesFromStart": 86,
+          "type": "rest",
+          "notes": "I-90 MP 89, east of Cle Elum. 24hr. Restrooms, picnic, vending."
+        },
+        {
+          "name": "Ellensburg, WA (Love's + Red Horse Lunch)",
+          "lat": 47.0076,
+          "lon": -120.5859,
+          "mile": 117,
+          "minutesFromStart": 101,
+          "type": "fuel",
+          "notes": "Love's #413, 1512 Hwy 97, I-90 Exit 106. 24hr. Then Red Horse Drive-In for lunch (~1 mi)."
+        },
+        {
+          "name": "Wild Horse Monument",
+          "lat": 46.9663,
+          "lon": -119.9615,
+          "mile": 148,
+          "minutesFromStart": 128,
+          "type": "rest",
+          "notes": "🌟 Optional. I-90 Exit 139 (EB only). Columbia River overlook, steel horse sculptures."
+        },
+        {
+          "name": "Moses Lake, WA (Love's)",
+          "lat": 47.1026,
+          "lon": -119.3415,
+          "mile": 185,
+          "minutesFromStart": 160,
+          "type": "fuel",
+          "notes": "Love's #827, 4315 Prichard Rd, I-90 Exit 174. 24hr. MANDATORY — fills 185 mi gap."
+        },
+        {
+          "name": "Sprague Lake Rest Area",
+          "lat": 47.3150,
+          "lon": -118.0000,
+          "mile": 240,
+          "minutesFromStart": 207,
+          "type": "rest",
+          "notes": "Stretch break. ~55 mi from Moses Lake."
+        },
+        {
+          "name": "Spokane Valley, WA (Lone Wolf HD Waypoint)",
+          "lat": 47.5902,
+          "lon": -117.1888,
+          "mile": 304,
+          "minutesFromStart": 266,
+          "type": "fuel",
+          "notes": "Chevron, 18709 E Cataldo Ave. Lone Wolf HD next door — CLOSED MONDAYS."
+        },
+        {
+          "name": "Lookout Pass (ID/MT State Line)",
+          "lat": 47.4541,
+          "lon": -115.6987,
+          "mile": 394,
+          "minutesFromStart": 345,
+          "type": "rest",
+          "notes": "🌟 Optional. 4,710 ft. Highest point on route. TIME ZONE: Pacific → Mountain (+1 hr)."
+        },
+        {
+          "name": "St. Regis, MT (Conoco Travel Center)",
+          "lat": 47.2994,
+          "lon": -115.1023,
+          "mile": 427,
+          "minutesFromStart": 374,
+          "type": "fuel",
+          "notes": "55 Mullan Gulch Rd. Fuel/store 24hr. Huck's Grill Mon 11am-7:30pm."
+        },
+        {
+          "name": "Missoula, MT",
+          "lat": 46.8729,
+          "lon": -113.9852,
+          "mile": 490,
+          "minutesFromStart": 429,
+          "type": "destination",
+          "notes": "Days Inn, 744 E Broadway St. Conf#: 90730EE047982 / 90730EE047983"
+        }
+      ]
+    },
+    {
+      "id": "rally-to-mke-2026-day2",
+      "name": "Day 2: Missoula → Buffalo",
+      "totalMiles": 507,
+      "totalMinutes": 407,
+      "stops": [
+        {
+          "name": "Missoula, MT",
+          "lat": 46.8729,
+          "lon": -113.9852,
+          "mile": 0,
+          "minutesFromStart": 0,
+          "type": "start",
+          "notes": "744 E Broadway St. Full tank at departure."
+        },
+        {
+          "name": "Butte, MT (Pilot + Copper Canyon HD)",
+          "lat": 46.0058,
+          "lon": -112.5010,
+          "mile": 120,
+          "minutesFromStart": 94,
+          "type": "fuel",
+          "notes": "Pilot/Town Pump, 1000 Grizzly Trail, I-90 Exit 122. 24hr. Copper Canyon HD nearby (Tue 10am-6pm)."
+        },
+        {
+          "name": "Bozeman/Belgrade, MT (Pilot)",
+          "lat": 45.7823,
+          "lon": -111.1783,
+          "mile": 205,
+          "minutesFromStart": 169,
+          "type": "fuel",
+          "notes": "Pilot, 561 Business Hub Dr, Belgrade, I-90 Exit 298. 24hr. MANDATORY — fills 229 mi gap."
+        },
+        {
+          "name": "Big Timber, MT",
+          "lat": 45.8350,
+          "lon": -109.9530,
+          "mile": 270,
+          "minutesFromStart": 225,
+          "type": "rest",
+          "notes": "Stretch break. Small Montana town at base of Crazy Mountains."
+        },
+        {
+          "name": "Billings, MT (Pilot + Burger Dive Lunch + Beartooth HD)",
+          "lat": 45.8003,
+          "lon": -108.4883,
+          "mile": 349,
+          "minutesFromStart": 277,
+          "type": "fuel",
+          "notes": "Pilot, 2711 N Frontage Rd, I-90 Exit 455. 24hr. Burger Dive lunch downtown. Beartooth HD (Tue 9am-5pm)."
+        },
+        {
+          "name": "Little Bighorn Battlefield",
+          "lat": 45.5642,
+          "lon": -107.4262,
+          "mile": 403,
+          "minutesFromStart": 320,
+          "type": "rest",
+          "notes": "🌟 Optional. I-90 Exit 510. Historic 1876 battle site. $20 motorcycle. VERIFY 2026 hours — was limited in 2025."
+        },
+        {
+          "name": "Sheridan, WY (Common Cents)",
+          "lat": 44.8119,
+          "lon": -106.9635,
+          "mile": 447,
+          "minutesFromStart": 353,
+          "type": "fuel",
+          "notes": "Common Cents Travel Plaza, 3601 N Main St, I-90 Exit 20. 24hr."
+        },
+        {
+          "name": "Buffalo, WY",
+          "lat": 44.3493,
+          "lon": -106.6917,
+          "mile": 507,
+          "minutesFromStart": 407,
+          "type": "destination",
+          "notes": "Super 8, 655 E Hart St. Conf#: 86376EE015389 / 86376EE015390"
+        }
+      ]
+    },
+    {
+      "id": "rally-to-mke-2026-day3",
+      "name": "Day 3: Buffalo → Chamberlain",
+      "totalMiles": 435,
+      "totalMinutes": 346,
+      "stops": [
+        {
+          "name": "Buffalo, WY",
+          "lat": 44.3493,
+          "lon": -106.6917,
+          "mile": 0,
+          "minutesFromStart": 0,
+          "type": "start",
+          "notes": "655 E Hart St. Full tank at departure."
+        },
+        {
+          "name": "Gillette, WY (Flying J + Deluxe HD)",
+          "lat": 44.2775,
+          "lon": -105.5133,
+          "mile": 68,
+          "minutesFromStart": 52,
+          "type": "fuel",
+          "notes": "Flying J, 1810 S Douglas Hwy, I-90 Exit 126. 24hr. Deluxe HD nearby (Wed 9am-6pm)."
+        },
+        {
+          "name": "Sturgis, SD (Sturgis HD)",
+          "lat": 44.4030,
+          "lon": -103.5097,
+          "mile": 150,
+          "minutesFromStart": 120,
+          "type": "rest",
+          "notes": "🌟 Optional. Legendary rally town. Sturgis HD, 1040 Junction Ave (Wed 9am-5pm)."
+        },
+        {
+          "name": "Rapid City, SD (Flying J + Black Hills HD)",
+          "lat": 44.1174,
+          "lon": -103.1787,
+          "mile": 209,
+          "minutesFromStart": 172,
+          "type": "fuel",
+          "notes": "Flying J, 4200 N I-90 Service Rd, Exit 61. 24hr. Black Hills HD nearby (Wed 9am-5pm)."
+        },
+        {
+          "name": "Wall, SD (Fuel + Wall Drug Lunch)",
+          "lat": 43.9930,
+          "lon": -102.2410,
+          "mile": 265,
+          "minutesFromStart": 222,
+          "type": "fuel",
+          "notes": "Common Cents/Exxon, 207 South Blvd. 24hr. FUEL BEFORE BADLANDS. Wall Drug Cafe for lunch."
+        },
+        {
+          "name": "Badlands National Park",
+          "lat": 43.8950,
+          "lon": -102.3430,
+          "mile": 272,
+          "minutesFromStart": 235,
+          "type": "rest",
+          "notes": "🌟 Pinnacles Overlook via SD-240 loop. $20 motorcycle. ~15 mi detour included in directions."
+        },
+        {
+          "name": "Murdo, SD (Pilot)",
+          "lat": 43.8850,
+          "lon": -100.7140,
+          "mile": 355,
+          "minutesFromStart": 290,
+          "type": "fuel",
+          "notes": "Pilot #599, 601 E 5th St, Exit 192. 24hr. ~90 mi from Wall (incl. Badlands loop)."
+        },
+        {
+          "name": "Dignity Statue",
+          "lat": 43.8200,
+          "lon": -99.3300,
+          "mile": 430,
+          "minutesFromStart": 340,
+          "type": "rest",
+          "notes": "🌟 50-ft sculpture at Chamberlain rest area. Missouri River overlook. Free."
+        },
+        {
+          "name": "Chamberlain, SD",
+          "lat": 43.8090,
+          "lon": -99.3240,
+          "mile": 435,
+          "minutesFromStart": 346,
+          "type": "destination",
+          "notes": "AmericInn, 1981 E King St. Conf#: 84960EE051878 / 84960EE051879"
+        }
+      ]
+    },
+    {
+      "id": "rally-to-mke-2026-day4",
+      "name": "Day 4: Chamberlain → Austin",
+      "totalMiles": 329,
+      "totalMinutes": 268,
+      "stops": [
+        {
+          "name": "Chamberlain, SD",
+          "lat": 43.8090,
+          "lon": -99.3240,
+          "mile": 0,
+          "minutesFromStart": 0,
+          "type": "start",
+          "notes": "1981 E King St. Full tank at departure."
+        },
+        {
+          "name": "Mitchell, SD (Corn Palace + Fuel)",
+          "lat": 43.7114,
+          "lon": -98.0298,
+          "mile": 70,
+          "minutesFromStart": 60,
+          "type": "fuel",
+          "notes": "I-90 Travel Center, 1821 S Burr St, Exit 332. 24hr. Corn Palace 1 mi away (604 N Main St)."
+        },
+        {
+          "name": "Sioux Falls, SD (Love's + Lunch + J&L HD)",
+          "lat": 43.5880,
+          "lon": -96.7260,
+          "mile": 195,
+          "minutesFromStart": 160,
+          "type": "fuel",
+          "notes": "Love's #445, 5301 N Cliff Ave, Exit 399. 24hr. Phillips Ave Diner lunch. J&L HD (Thu 9am-6pm)."
+        },
+        {
+          "name": "Blue Earth, MN (Jolly Green Giant)",
+          "lat": 43.6538,
+          "lon": -94.1033,
+          "mile": 270,
+          "minutesFromStart": 217,
+          "type": "fuel",
+          "notes": "🌟 Waypoint. 55-ft Jolly Green Giant statue. Kwik Trip, 209 S Grove St (24hr)."
+        },
+        {
+          "name": "Austin, MN",
+          "lat": 43.6716,
+          "lon": -92.9747,
+          "mile": 329,
+          "minutesFromStart": 268,
+          "type": "destination",
+          "notes": "AmericInn, 1700 8th St NW. Conf#: 85014EE037040 / 85014EE037041. SPAM Museum nearby!"
+        }
+      ]
+    },
+    {
+      "id": "rally-to-mke-2026-day5",
+      "name": "Day 5: Austin → New Berlin",
+      "totalMiles": 318,
+      "totalMinutes": 322,
+      "stops": [
+        {
+          "name": "Austin, MN",
+          "lat": 43.6716,
+          "lon": -92.9747,
+          "mile": 0,
+          "minutesFromStart": 0,
+          "type": "start",
+          "notes": "1700 8th St NW. Full tank at departure."
+        },
+        {
+          "name": "La Crosse/Onalaska, WI (Kwik Trip + Lunch + Great River HD)",
+          "lat": 43.8396,
+          "lon": -91.2502,
+          "mile": 104,
+          "minutesFromStart": 88,
+          "type": "fuel",
+          "notes": "Kwik Trip, 2002 Kwik Trip Way, La Crosse. 24hr. Hungry Peddler lunch. Great River HD (Fri 10am-6pm)."
+        },
+        {
+          "name": "Gays Mills, WI",
+          "lat": 43.3270,
+          "lon": -90.8460,
+          "mile": 155,
+          "minutesFromStart": 148,
+          "type": "rest",
+          "notes": "🌟 Waypoint. Apple capital of WI. Driftless Area town."
+        },
+        {
+          "name": "Richland Center, WI (Kwik Trip)",
+          "lat": 43.3344,
+          "lon": -90.3569,
+          "mile": 175,
+          "minutesFromStart": 170,
+          "type": "fuel",
+          "notes": "Kwik Trip #363, 2393 US-14. 24hr. MANDATORY — La Crosse to New Berlin is 214 mi without this."
+        },
+        {
+          "name": "Spring Green, WI",
+          "lat": 43.1785,
+          "lon": -90.0685,
+          "mile": 200,
+          "minutesFromStart": 200,
+          "type": "rest",
+          "notes": "🌟 Optional. Taliesin (Frank Lloyd Wright) and House on the Rock nearby."
+        },
+        {
+          "name": "Madison, WI (HD of Madison nearby)",
+          "lat": 43.0722,
+          "lon": -89.3840,
+          "mile": 252,
+          "minutesFromStart": 255,
+          "type": "rest",
+          "notes": "I-94 junction. HD of Madison at 6200 Millpond Rd (Fri 9am-6pm) ~2 mi off I-94."
+        },
+        {
+          "name": "New Berlin, WI",
+          "lat": 42.9764,
+          "lon": -88.1282,
+          "mile": 318,
+          "minutesFromStart": 322,
+          "type": "destination",
+          "notes": "🏁 15300 Rock Ridge Rd. YOU MADE IT! Rally To MKE complete!"
+        }
+      ]
+    }
+  ]
+}

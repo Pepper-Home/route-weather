@@ -1,6 +1,17 @@
 {
+  "routes": [
+    {
+      "route": "/api/user-trips*",
+      "allowedRoles": ["owner"]
+    }
+  ],
   "navigationFallback": {
     "rewrite": "/index.html",
     "exclude": ["/api/*", "/assets/*", "/trips/*"]
+  },
+  "responseOverrides": {
+    "401": {
+      "statusCode": 401
+    }
   }
 }

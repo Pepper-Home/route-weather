@@ -3,15 +3,28 @@ import { ref, shallowRef } from 'vue'
 const TRIPS_PATH = '/trips/'
 const API_PATH = '/api/user-trips'
 const DELETED_TRIPS_KEY = 'rw-deleted-trips'
+const AUTH_ME_PATH = '/.auth/me'
+const LOGIN_PATH = '/.auth/login/github'
+
+// Check if user is authenticated via SWA
+async function checkAuth() {
+  try {
+    const res = await fetch(AUTH_ME_PATH)
+    if (!res.ok) return null
+    const data = await res.json()
+    return data?.clientPrincipal || null
+  } catch { return null }
+}
 
 // Server-side trip storage via Azure Blob Storage
 async function fetchUserTrips() {
   try {
     const res = await fetch(API_PATH)
-    if (!res.ok) return []
+    if (res.status === 401) return { trips: [], authRequired: true }
+    if (!res.ok) return { trips: [], authRequired: false }
     const data = await res.json()
-    return data.trips || []
-  } catch { return [] }
+    return { trips: data.trips || [], authRequired: false }
+  } catch { return { trips: [], authRequired: false } }
 }
 
 async function saveUserTripToServer(trip) {
@@ -42,6 +55,8 @@ export function useTrips() {
   const selectedTrip = shallowRef(null)
   const selectedDay = shallowRef(null)
   const loading = ref(false)
+  const authRequired = ref(false)
+  const user = ref(null)
 
   async function loadTripIndex() {
     try {
@@ -63,6 +78,9 @@ export function useTrips() {
   async function init() {
     loading.value = true
     try {
+      // Check authentication status
+      user.value = await checkAuth()
+
       // Load built-in trips from static files
       const index = await loadTripIndex()
       const results = await Promise.allSettled(index.map(entry => loadTrip(entry.file)))
@@ -70,8 +88,10 @@ export function useTrips() {
         .filter(r => r.status === 'fulfilled')
         .map(r => r.value)
 
-      // Load user trips from server (Azure Blob Storage)
-      const userTrips = await fetchUserTrips()
+      // Load user trips from server (Azure Blob Storage) — requires auth
+      const serverResult = await fetchUserTrips()
+      authRequired.value = serverResult.authRequired
+      const userTrips = serverResult.trips
 
       // Filter out deleted built-in trips
       const deletedIds = getDeletedTripIds()
@@ -184,16 +204,23 @@ export function useTrips() {
     }
   }
 
+  function login() {
+    window.location.href = LOGIN_PATH
+  }
+
   return {
     trips,
     selectedTrip,
     selectedDay,
     loading,
+    authRequired,
+    user,
     init,
     selectTrip,
     selectDay,
     importTrip,
     removeTrip,
-    renameTrip
+    renameTrip,
+    login
   }
 }
