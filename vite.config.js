@@ -49,14 +49,6 @@ export default defineConfig({
               cacheName: 'distance-matrix-cache',
               expiration: { maxEntries: 50, maxAgeSeconds: 14400 }
             }
-          },
-          {
-            urlPattern: /\/trips\/.*\.json$/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'trip-data-cache',
-              expiration: { maxEntries: 20, maxAgeSeconds: 86400 }
-            }
           }
         ]
       }

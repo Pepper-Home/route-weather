@@ -60,7 +60,7 @@ function saveRename() {
       <!-- Delete confirmation -->
       <div v-if="showDeleteConfirm" class="mb-2 p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
         <p class="text-sm text-red-700 dark:text-red-300 font-semibold">Remove "{{ selectedTrip?.name }}"?</p>
-        <p class="text-xs text-gray-500 mt-1">This hides the trip. Use Clear Cache to restore built-in trips.</p>
+        <p class="text-xs text-gray-500 mt-1">This permanently deletes the trip from the server.</p>
         <div class="flex gap-2 mt-2">
           <button @click="emit('remove-trip', showDeleteConfirm); showDeleteConfirm = null" class="text-xs bg-red-500 text-white px-3 py-1 rounded">Yes, remove</button>
           <button @click="showDeleteConfirm = null" class="text-xs bg-gray-300 text-gray-700 px-3 py-1 rounded">Cancel</button>

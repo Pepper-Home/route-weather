@@ -13,10 +13,7 @@ const departureMinutes = ref(480) // 8:00 AM default (minutes since midnight)
 onMounted(() => init())
 
 async function clearAndReload() {
-  // Nuke all localStorage
-  localStorage.clear()
-
-  // Nuke all service worker caches
+  // Nuke service worker caches (weather, ETAs, etc.)
   if ('caches' in window) {
     const names = await caches.keys()
     await Promise.all(names.map(n => caches.delete(n)))

@@ -1,8 +1,6 @@
 import { ref, shallowRef } from 'vue'
 
-const TRIPS_PATH = '/trips/'
 const API_PATH = '/api/user-trips'
-const DELETED_TRIPS_KEY = 'rw-deleted-trips'
 const AUTH_ME_PATH = '/.auth/me'
 const LOGIN_PATH = '/.auth/login/github'
 
@@ -41,16 +39,6 @@ async function deleteUserTripFromServer(tripId) {
   if (!res.ok && res.status !== 404) throw new Error(`Delete failed: ${res.status}`)
 }
 
-function getDeletedTripIds() {
-  try {
-    return JSON.parse(localStorage.getItem(DELETED_TRIPS_KEY)) || []
-  } catch { return [] }
-}
-
-function saveDeletedTripIds(ids) {
-  localStorage.setItem(DELETED_TRIPS_KEY, JSON.stringify(ids))
-}
-
 export function useTrips() {
   const trips = ref([])
   const selectedTrip = shallowRef(null)
@@ -59,64 +47,15 @@ export function useTrips() {
   const authRequired = ref(false)
   const user = ref(null)
 
-  async function loadTripIndex() {
-    try {
-      const res = await fetch(`${TRIPS_PATH}index.json`)
-      if (!res.ok) throw new Error('Failed to load trip index')
-      const index = await res.json()
-      return index.trips || []
-    } catch {
-      return []
-    }
-  }
-
-  async function loadTrip(tripFile) {
-    const res = await fetch(`${TRIPS_PATH}${tripFile}`)
-    if (!res.ok) throw new Error(`Failed to load trip: ${tripFile}`)
-    return res.json()
-  }
-
   async function init() {
     loading.value = true
     try {
-      // Check authentication status
       user.value = await checkAuth()
 
-      // Load built-in trips from static files
-      const index = await loadTripIndex()
-      const results = await Promise.allSettled(index.map(entry => loadTrip(entry.file)))
-      const builtIn = results
-        .filter(r => r.status === 'fulfilled')
-        .map(r => r.value)
-
-      // Load user trips from server (Azure Blob Storage) — requires auth
+      // v2: single source of truth — Azure Blob Storage only
       const serverResult = await fetchUserTrips()
       authRequired.value = serverResult.authRequired
-      const userTrips = serverResult.trips
-
-      // Filter out deleted built-in trips
-      const deletedIds = getDeletedTripIds()
-      const allTrips = [
-        ...builtIn.filter(t => !deletedIds.includes(t.id)),
-        ...userTrips
-      ]
-
-      trips.value = allTrips
-
-      // Restore last selection
-      const lastTripId = localStorage.getItem('rw-last-trip')
-      const lastDayId = localStorage.getItem('rw-last-day')
-
-      if (lastTripId) {
-        const trip = allTrips.find(t => t.id === lastTripId)
-        if (trip) {
-          selectedTrip.value = trip
-          if (lastDayId) {
-            const day = trip.days.find(d => d.id === lastDayId)
-            if (day) selectedDay.value = day
-          }
-        }
-      }
+      trips.value = serverResult.trips
     } finally {
       loading.value = false
     }
@@ -125,13 +64,10 @@ export function useTrips() {
   function selectTrip(trip) {
     selectedTrip.value = trip
     selectedDay.value = null
-    localStorage.setItem('rw-last-trip', trip.id)
-    localStorage.removeItem('rw-last-day')
   }
 
   function selectDay(day) {
     selectedDay.value = day
-    localStorage.setItem('rw-last-day', day.id)
   }
 
   async function importTrip(tripJson) {
@@ -150,59 +86,33 @@ export function useTrips() {
       }
     }
 
-    // Check for duplicate ID
     if (trips.value.some(t => t.id === tripJson.id)) {
       throw new Error(`Trip with ID "${tripJson.id}" already exists`)
     }
 
-    // Save to server
     await saveUserTripToServer(tripJson)
-
-    // Un-delete if it was previously deleted
-    const deletedIds = getDeletedTripIds()
-    saveDeletedTripIds(deletedIds.filter(id => id !== tripJson.id))
-
-    // Add to active list
     trips.value = [...trips.value, tripJson]
-
     return tripJson
   }
 
   async function removeTrip(tripId) {
-    // Try to delete from server (may fail for built-in trips or if not authenticated — that's OK)
-    try {
-      await deleteUserTripFromServer(tripId)
-    } catch { /* ignore — built-in trips aren't on server */ }
+    await deleteUserTripFromServer(tripId)
 
-    // Add to deleted list (handles built-in trips that can't be deleted from server)
-    const deletedIds = getDeletedTripIds()
-    if (!deletedIds.includes(tripId)) {
-      deletedIds.push(tripId)
-      saveDeletedTripIds(deletedIds)
-    }
-
-    // Remove from active list
     trips.value = trips.value.filter(t => t.id !== tripId)
 
-    // Clear selection if deleted trip was selected
     if (selectedTrip.value?.id === tripId) {
       selectedTrip.value = null
       selectedDay.value = null
-      localStorage.removeItem('rw-last-trip')
-      localStorage.removeItem('rw-last-day')
     }
   }
 
   async function renameTrip(tripId, newName) {
     if (!newName?.trim()) return
 
-    // Update in active list
     const trip = trips.value.find(t => t.id === tripId)
     if (trip) {
       trip.name = newName.trim()
-      trips.value = [...trips.value] // trigger reactivity
-
-      // If it's a server-side trip, save the updated version
+      trips.value = [...trips.value]
       await saveUserTripToServer(trip).catch(() => {})
     }
   }
